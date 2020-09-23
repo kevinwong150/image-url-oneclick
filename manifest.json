@@ -1,0 +1,26 @@
+{
+  "name": "Image URL Oneclick",
+  "version": "1.0",
+  "description": "Get image URL in one click",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "./src/assets/icon_32.png"
+  },
+  "icons": {
+    "48": "./src/assets/icon_32.png",
+    "128": "./src/assets/icon_128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["./src/js/background.js"],
+    "persistent": false
+  },
+  "options_ui": {
+    "page": "./src/options.html",
+    "open_in_tab": true
+  }
+}
