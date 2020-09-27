@@ -1,6 +1,6 @@
-// init options status
-let isOptionOpen = false;
-let optionsTabId = null;
+// init records status
+let isRecordOpen = false;
+let recordsTabId = null;
 
 //click extension icon will save image url in all opening tabs to storage
 chrome.browserAction.onClicked.addListener(function(from_tab) {
@@ -8,53 +8,47 @@ chrome.browserAction.onClicked.addListener(function(from_tab) {
     let imageURLs = [];
 
     // find image urls from all tabs
-    for (var i = 0; i < tabs.length; i++) {
+    for (let i = 0; i < tabs.length; i++) {
       let tabURL = tabs[i].url;
       if(isImageURL(tabURL)) {
         imageURLs.push(tabURL);
       }
     }
 
+    // set records if there is any captured
     if(imageURLs.length > 0) {
-      // open options page
-      chrome.runtime.openOptionsPage(function() {
-        let timestampKey = Date.now();
-        let setValue = imageURLs.join("|");
-        
-        // put newly saved urls
-        chrome.storage.sync.set({[timestampKey.toString()]: setValue}, function() {
-          if (isOptionOpen) {
-          // tell options page update UI on-the-fly
-          chrome.runtime.sendMessage({pendingOptionAction: "updateList"}, function(response) {
-            if(response) {
-              console.log("optionStatus: ", response["optionStatus"]);
-            }
-            else {
-              console.log("options page may not be opening");
-            }
-          });
-          }
-        });
-      });
+      // if records page is open, just set it
+      if(isRecordOpen && recordsTabId) {
+        setRecords(imageURLs);
+      }
+      else {
+        // else open records page
+        chrome.tabs.create({  
+          url: chrome.runtime.getURL("src/records.html")
+        }, setRecords(imageURLs));
+      }
+    }
+    else {
+      console.log("No image tab is opening.")
     }
   });
 });
 
 // message listener 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  switch (request.optionStatus) {
+  switch (request.recordStatus) {
     case null:
     case undefined:
       sendResponse({backgroundStatus: "null/undefined"});
       break;
     case "opened":
-      isOptionOpen = true;
-      optionsTabId = request.optionsTabId ? request.optionsTabId : optionsTabId;
-      sendResponse({backgroundStatus: "updated: options page opened"});
+      isRecordOpen = true;
+      recordsTabId = request.recordsTabId ? request.recordsTabId : recordsTabId;
+      sendResponse({backgroundStatus: "updated: records page opened"});
       break;
     case "closed":
-      isOptionOpen = false;
-      sendResponse({backgroundStatus: "updated: options page closed"});
+      isRecordOpen = false;
+      sendResponse({backgroundStatus: "updated: records page closed"});
       break;
     default:
       sendResponse({backgroundStatus: "noop"});
@@ -62,17 +56,53 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
-// reset options status on any tab closed 
+// reset records status on any tab closed 
 chrome.tabs.onRemoved.addListener((closedTabId) => {
-  if(closedTabId == optionsTabId) {
-    isOptionOpen = false;
-    optionsTabId = null;
+  if(closedTabId == recordsTabId) {
+    isRecordOpen = false;
+    recordsTabId = null;
   }
 });
+
+// create context menu item
+chrome.contextMenus.create({
+  id: "records_page",
+  title: "Open Records Page", 
+  onclick: () => {
+    chrome.tabs.create({  
+      url: chrome.runtime.getURL("src/records.html")
+    });
+  },
+  contexts: ["browser_action"]
+}, () => {});
 
 
 function isImageURL(url) {
   // finding suffix:
   // return(url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
-  return(url.match(/\.(jpeg|jpg|gif|png|webp)/) != null);
+  return(url.toLowerCase().match(/\.(jpeg|jpg|gif|png|svg|webp)/) != null);
+}
+
+
+function setRecords(imageURLs) {
+  let timestampKey = Date.now();
+  let newRecord = {
+    urls: imageURLs.join("|"),
+    count: imageURLs.length
+  };
+  
+  // put newly saved urls
+  chrome.storage.sync.set({[timestampKey.toString()]: newRecord}, function() {
+    if (isRecordOpen && recordsTabId) {
+      // tell records page update UI on-the-fly
+      chrome.runtime.sendMessage({pendingRecordAction: "updateList"}, function(response) {
+        if(response) {
+          console.log("recordStatus: ", response["recordStatus"]);
+        }
+        else {
+          console.log("records page may not be opening");
+        }
+      });
+    }
+  });
 }

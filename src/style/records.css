@@ -1,0 +1,78 @@
+@import "./variables/assets.css";
+@import "./variables/colors.css";
+
+.records-header {
+  display: flex;
+  align-items: center;
+}
+
+.records-header * + * {
+  margin-left: 20px;
+}
+
+.records-header h1 {
+  display: inline-block;
+  font-size: 30px;
+}
+
+.record-list {
+  padding: 0;
+  list-style: none;
+}
+
+.record-list-item .record-title {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.record-list-item .record-title .record-title-item.mod-copy {
+  display: none;
+  appearance: none;
+  background-color: unset;
+  background-image: var(--copy);
+  background-size: 30px 30px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border: unset;
+  outline: unset;
+  height: 30px;
+  width: 30px;
+  font-size: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.record-list-item:hover .record-title .record-title-item.mod-copy {
+  display: initial;
+}
+
+.record-list-item .record-title .record-title-item.mod-copy.mod-success,
+.record-list-item .record-title .record-title-item.mod-copy.mod-fail {
+  font-size: initial;
+  width: auto;
+  padding-left: 25px;
+  background-size: 20px 20px;
+  background-position: left center;
+  pointer-events: none;
+  display: initial;
+  user-select: none;
+}
+
+.record-list-item .record-title .record-title-item.mod-copy.mod-success {
+  background-image: var(--success);
+  color: var(--correct);
+}
+
+.record-list-item .record-title .record-title-item.mod-copy.mod-fail {
+  background-image: var(--fail);
+  color: var(--incorrect);
+}
+
+.record-list-item .record-title .record-title-item + .record-title-item {
+  margin-left: 20px;
+}

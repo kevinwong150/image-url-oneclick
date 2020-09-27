@@ -13,11 +13,12 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "background": {
     "scripts": ["./src/js/background.js"],
-    "persistent": false
+    "persistent": true
   },
   "options_ui": {
     "page": "./src/options.html",
