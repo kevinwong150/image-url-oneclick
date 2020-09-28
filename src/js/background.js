@@ -2,7 +2,10 @@
 let isRecordOpen = false;
 let recordsTabId = null;
 
-// initialized settings
+// init settings 
+let isRemoveTabs = false;
+
+// initialized settings on installed
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({
     "settings-removeTabs?": false,
@@ -10,6 +13,22 @@ chrome.runtime.onInstalled.addListener(() => {
   }, function() {
     console.log("Initialized settings");
   });
+});
+
+// get saved settings 
+chrome.storage.sync.get([
+  "settings-removeTabs?"
+], function (records) {
+  if("settings-removeTabs?" in records) {
+    isRemoveTabs = records["settings-removeTabs?"];
+  }
+});
+
+// keep settings up-to-date
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if(areaName === "sync" && "settings-removeTabs?" in changes) {
+    isRemoveTabs = changes["settings-removeTabs?"]["newValue"];
+  }
 });
 
 //click extension icon will save image url in all opening tabs to storage
@@ -29,13 +48,25 @@ chrome.browserAction.onClicked.addListener(function(from_tab) {
     if(imageURLs.length > 0) {
       // if records page is open, just set it
       if(isRecordOpen && recordsTabId) {
-        setRecords(imageURLs);
+        chrome.tabs.get(recordsTabId, tab => {
+          chrome.tabs.highlight({tabs: tab.index}, () => {
+            setRecords(imageURLs);
+          });
+        });
       }
       else {
         // else open records page
         chrome.tabs.create({  
           url: chrome.runtime.getURL("src/records.html")
         }, setRecords(imageURLs));
+      }
+
+      if(isRemoveTabs) {
+        chrome.tabs.query({url: imageURLs}, function(tabs) {
+          tabs.map(tab => {
+            chrome.tabs.remove(tab.id);
+          })
+        });
       }
     }
     else {

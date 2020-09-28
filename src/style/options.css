@@ -22,13 +22,70 @@ dl dd {
 }
 
 dl dd label {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding: 5px;
   cursor: pointer;
 }
 
-dl dd label + label {
-  margin-left: 20px;
+dl dd label::before,
+dl dd label::after {
+  position: absolute;
+  width: calc(50% - 5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: var(--light);
+  font-weight: bold;
 }
 
-dl dd label input[type=radio] {
+dl dd label::before {
+  content: "Yes"; 
+  left: 10px;
+}
+
+dl dd label::after {
+  content: "No";
+  right: 10px;
+}
+
+
+dl dd label input[type='checkbox'] {
   cursor: pointer;
+  position: relative;
+  height: 50px;
+  width: 100px;
+  appearance: none;
+  border: unset;
+  outline: unset;
+  background-color: var(--light-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  transition: 0.6s background-color ease-in-out;
+  will-change: background-color;
+}
+
+dl dd label input[type='checkbox']:checked {
+  background-color: var(--correct);
+}
+
+dl dd label input[type='checkbox']::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  height: calc(50px - 10px);
+  width: calc(50px - 10px);
+  background-color: var(--light);
+  transition: 0.6s left ease-in-out;
+  will-change: left;
+  z-index: 20;
+  border-radius: 25px;
+}
+
+dl dd label input[type='checkbox']:checked::before {
+  left: calc(50% + 5px);
 }

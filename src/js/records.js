@@ -1,5 +1,31 @@
+let hasConfirm = true;
+
+// get saved settings 
+chrome.storage.sync.get([
+  "settings-removeAllConfirmation?"
+], function (records) {
+  if("settings-removeAllConfirmation?" in records) {
+    hasConfirm = records["settings-removeAllConfirmation?"];
+  }
+});
+
+// keep settings up-to-date
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  console.log((areaName === "sync" && "settings-removeAllConfirmation?" in changes));
+  if(areaName === "sync" && "settings-removeAllConfirmation?" in changes) {
+    hasConfirm = changes["settings-removeAllConfirmation?"]["newValue"];
+  }
+});
+
 function clear_all_records() {
-  if(confirm("This will remove all listed records, are you sure?")) {
+  if(hasConfirm) {
+    if(confirm("This will remove all listed records, are you sure?")) {
+      chrome.storage.sync.clear(() => {
+        document.getElementById('records-body').innerHTML = "There is no record yet";
+      });
+    }
+  }
+  else {
     chrome.storage.sync.clear(() => {
       document.getElementById('records-body').innerHTML = "There is no record yet";
     });
@@ -22,6 +48,8 @@ function restore_records() {
       // ignore settings if invalid timestamp 
       if(!(new Date(parseInt(timestamp)).getTime())) continue;
 
+      let record = records[timestamp];
+
       // create list item by js createElement so we could add eventListener to it easily
       let listItem = document.createElement("li"); 
       listItem.classList = [ "record-list-item" ];
@@ -30,16 +58,16 @@ function restore_records() {
         <div class="record-title">
           <button class="record-title-item button mod-remove"></button>
           <span class="record-title-item mod-date">${(new Date(parseInt(timestamp))).toLocaleString()}</span>
-          <span class="record-title-item mod-count">Count: ${records[timestamp]["count"]}</span>
+          <span class="record-title-item mod-count">Count: ${record["count"]}</span>
           <button class="record-title-item button mod-copy"></button>
         </div>
         <div class="record-content">
-          <span class="record-content-item mod-urls">${records[timestamp]["urls"]}</span>
+          <span class="record-content-item mod-urls">${record["urls"]}</span>
         </div>
       `;
 
       recordList.appendChild(listItem);
-
+      
       // put the remove record function
       let removeButton = listItem.querySelector("button.record-title-item.mod-remove");
       if(removeButton) {
@@ -54,7 +82,7 @@ function restore_records() {
       let copyButton = listItem.querySelector("button.record-title-item.mod-copy");
       if(copyButton) {
         copyButton.addEventListener('click', () => {
-          navigator.clipboard.writeText(records[timestamp]["urls"]).then(function() {
+          navigator.clipboard.writeText(record["urls"]).then(function() {
             copyButton.classList.add("mod-success");
             copyButton.innerText = "Copied!";
             setTimeout(() => {
@@ -86,6 +114,7 @@ chrome.runtime.onMessage.addListener(
         console.log("recordStatus:", "null/undefined");
         sendResponse({recordStatus: "null/undefined recieved"});
         break;
+      // use message to implement the live update when record page is highlighted
       case "updateList":
         restore_records();
         console.log("recordStatus:", "updated");

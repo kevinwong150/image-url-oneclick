@@ -1,4 +1,8 @@
 :root {
+  --light-light: #FFFFFF;
+  --light: #FAFAFA;
+  --light-dark: #666666;
+
   --correct: #32bea6;
   --incorrect: #e04f5f;
 }
