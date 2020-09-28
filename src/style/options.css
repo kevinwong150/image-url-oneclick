@@ -1,0 +1,34 @@
+@import "./variables/assets.css";
+@import "./variables/colors.css";
+
+body {
+  padding: 0 20px;
+  margin: 0;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+dl dt {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+dl dd {
+  margin: 5px 0;
+  font-size: 16px;
+  user-select: none;
+}
+
+dl dd label {
+  cursor: pointer;
+}
+
+dl dd label + label {
+  margin-left: 20px;
+}
+
+dl dd label input[type=radio] {
+  cursor: pointer;
+}

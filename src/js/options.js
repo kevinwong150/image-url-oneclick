@@ -1,1 +1,3 @@
-// options page not implemented
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("option loaded");
+});

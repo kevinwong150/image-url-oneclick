@@ -19,6 +19,9 @@ function restore_records() {
     recordList.innerHTML = "";
 
     for (timestamp in records) {
+      // ignore settings if invalid timestamp 
+      if(!(new Date(parseInt(timestamp)).getTime())) continue;
+
       // create list item by js createElement so we could add eventListener to it easily
       let listItem = document.createElement("li"); 
       listItem.classList = [ "record-list-item" ];

@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Options Page</title>
+    <title>Settings Page</title>
+    <link rel="stylesheet" href="./style/options.css">
+    <script src="./js/options.js"></script>
   </head>
   <body>
-    This is options page.
-    <script src="./js/options.js"></script>
+    <h1>Settings</h1>
+    <dl>
+      <dt><b>Remove image tabs after saved to extension?</b></dt>
+      <dd>
+        <label>
+          <input name="remove-tabs" type="radio" value="yes"/> Yes
+        </label>
+        <label>
+          <input name="remove-tabs" type="radio" value="no"/> No
+        </label>
+      </dd>
+      
+      <dt><b>Show confirm message when remove all records?</b></dt>
+      <dd>
+        <label>
+          <input name="remove-all" type="radio" value="yes"/> Yes
+        </label>
+        <label>
+          <input name="remove-all" type="radio" value="no"/> No
+        </label>       
+      </dd>
+    </dl>
   </body>
 </html>

@@ -2,6 +2,16 @@
 let isRecordOpen = false;
 let recordsTabId = null;
 
+// initialized settings
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.sync.set({
+    "settings-removeTabs?": false,
+    "settings-removeAllConfirmation?": true
+  }, function() {
+    console.log("Initialized settings");
+  });
+});
+
 //click extension icon will save image url in all opening tabs to storage
 chrome.browserAction.onClicked.addListener(function(from_tab) {
   chrome.tabs.getAllInWindow(null, function(tabs){
