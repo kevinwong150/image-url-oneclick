@@ -1,6 +1,10 @@
 @import "./variables/assets.css";
 @import "./variables/colors.css";
 
+body {
+  padding: 0 20px;
+}
+
 .records-header {
   display: flex;
   align-items: center;
@@ -30,29 +34,38 @@
   font-size: 18px;
 }
 
-.record-list-item .record-title .record-title-item.mod-copy {
-  display: none;
+.record-list-item .record-title .record-title-item.button {
   appearance: none;
   background-color: unset;
-  background-image: var(--copy);
-  background-size: 30px 30px;
   background-position: center center;
   background-repeat: no-repeat;
   border: unset;
   outline: unset;
-  height: 30px;
-  width: 30px;
   font-size: 0;
   cursor: pointer;
-  position: relative;
 }
 
-.record-list-item:hover .record-title .record-title-item.mod-copy {
+.record-list-item .record-title .record-title-item.button.mod-remove {
+  background-image: var(--remove);
+  background-size: 15px 15px;
+  height: 15px;
+  width: 15px;
+}
+
+.record-list-item .record-title .record-title-item.button.mod-copy {
+  display: none;
+  background-image: var(--copy);
+  background-size: 20px 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.record-list-item:hover .record-title .record-title-item.button.mod-copy {
   display: initial;
 }
 
-.record-list-item .record-title .record-title-item.mod-copy.mod-success,
-.record-list-item .record-title .record-title-item.mod-copy.mod-fail {
+.record-list-item .record-title .record-title-item.button.mod-copy.mod-success,
+.record-list-item .record-title .record-title-item.button.mod-copy.mod-fail {
   font-size: initial;
   width: auto;
   padding-left: 25px;
@@ -63,12 +76,12 @@
   user-select: none;
 }
 
-.record-list-item .record-title .record-title-item.mod-copy.mod-success {
+.record-list-item .record-title .record-title-item.button.mod-copy.mod-success {
   background-image: var(--success);
   color: var(--correct);
 }
 
-.record-list-item .record-title .record-title-item.mod-copy.mod-fail {
+.record-list-item .record-title .record-title-item.button.mod-copy.mod-fail {
   background-image: var(--fail);
   color: var(--incorrect);
 }

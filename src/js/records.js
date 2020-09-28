@@ -1,7 +1,9 @@
 function clear_all_records() {
-  chrome.storage.sync.clear(() => {
-    document.getElementById('records-body').innerHTML = "There is no record yet";
-  });
+  if(confirm("This will remove all listed records, are you sure?")) {
+    chrome.storage.sync.clear(() => {
+      document.getElementById('records-body').innerHTML = "There is no record yet";
+    });
+  }
 }
 
 function restore_records() {
@@ -20,11 +22,13 @@ function restore_records() {
       // create list item by js createElement so we could add eventListener to it easily
       let listItem = document.createElement("li"); 
       listItem.classList = [ "record-list-item" ];
+      listItem.setAttribute("data-key", timestamp);
       listItem.innerHTML = `
         <div class="record-title">
+          <button class="record-title-item button mod-remove"></button>
           <span class="record-title-item mod-date">${(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="record-title-item mod-count">Count: ${records[timestamp]["count"]}</span>
-          <button class="record-title-item mod-copy"></button>
+          <button class="record-title-item button mod-copy"></button>
         </div>
         <div class="record-content">
           <span class="record-content-item mod-urls">${records[timestamp]["urls"]}</span>
@@ -32,6 +36,16 @@ function restore_records() {
       `;
 
       recordList.appendChild(listItem);
+
+      // put the remove record function
+      let removeButton = listItem.querySelector("button.record-title-item.mod-remove");
+      if(removeButton) {
+        removeButton.addEventListener('click', () => {
+          chrome.storage.sync.remove(listItem.getAttribute("data-key"), () => {
+            listItem.remove();
+          });
+        });
+      }
 
       // put the copy to clipboard function
       let copyButton = listItem.querySelector("button.record-title-item.mod-copy");
