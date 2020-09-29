@@ -56,10 +56,10 @@ function restore_records() {
       listItem.setAttribute("data-key", timestamp);
       listItem.innerHTML = `
         <div class="record-title">
-          <button class="record-title-item button mod-remove"></button>
+          <button class="record-title-item button mod-remove" title="Delete record"></button>
           <span class="record-title-item mod-date">${(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="record-title-item mod-count">Count: ${record["count"]}</span>
-          <button class="record-title-item button mod-copy"></button>
+          <button class="record-title-item button mod-copy" title="Copy URLs"></button>
         </div>
         <div class="record-content">
           <span class="record-content-item mod-urls">${record["urls"]}</span>

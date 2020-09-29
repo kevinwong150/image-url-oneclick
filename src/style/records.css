@@ -110,3 +110,7 @@ body {
 .record-list-item .record-title .record-title-item + .record-title-item {
   margin-left: 20px;
 }
+
+.record-list-item .record-content .record-content-item {
+  word-break: break-all;
+}
