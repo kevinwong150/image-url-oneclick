@@ -17,7 +17,7 @@
     "contextMenus"
   ],
   "background": {
-    "scripts": ["./src/js/background.js"],
+    "scripts": ["./src/background.js"],
     "persistent": true
   },
   "options_ui": {

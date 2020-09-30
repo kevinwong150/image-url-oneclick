@@ -6,9 +6,12 @@
   "author": "kevinwong150 <kevinwyl@yahoo.com.hk>",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf dist && parcel build src/*.html -d dist/src/ --public-url ./ && parcel build src/js/background.js -d dist/src/js && cp -R static dist/static && cp manifest.json dist/"
+    "clean": "rm -rf dist .cache node_modules",
+    "watch": "yarn clean && mkdir dist && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node -d dist/src/ --public-url ./",
+    "build": "yarn clean && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
   },
   "devDependencies": {
+    "cssnano": "^4.1.10",
     "parcel-bundler": "^1.12.4"
   }
 }
