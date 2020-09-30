@@ -1,0 +1,14 @@
+{
+  "name": "image-url-oneclick",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/kevinwong150/image-url-oneclick.git",
+  "author": "kevinwong150 <kevinwyl@yahoo.com.hk>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && parcel build src/*.html -d dist/src/ --public-url ./ && parcel build src/js/background.js -d dist/src/js && cp -R static dist/static && cp manifest.json dist/"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
