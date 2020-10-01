@@ -13,5 +13,13 @@
   "devDependencies": {
     "cssnano": "^4.1.10",
     "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "preact": "^10.5.3"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom/test-utils": "preact/test-utils",
+    "react-dom": "preact/compat"
   }
 }

@@ -37,12 +37,12 @@ chrome.browserAction.onClicked.addListener(function(from_tab) {
     let imageURLs = [];
 
     // find image urls from all tabs
-    for (let i = 0; i < tabs.length; i++) {
-      let tabURL = tabs[i].url;
+    tabs.map(tab => {
+      let tabURL = tab.url;
       if(isImageURL(tabURL)) {
         imageURLs.push(tabURL);
       }
-    }
+    });
 
     // set records if there is any captured
     if(imageURLs.length > 0) {

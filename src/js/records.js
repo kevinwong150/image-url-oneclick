@@ -1,3 +1,6 @@
+import { h, render, Component } from "preact";
+import Record from "./Record";
+
 let hasConfirm = true;
 
 // get saved settings 
@@ -24,16 +27,16 @@ function clear_all_records() {
 
     if(hasConfirm) {
       if(confirm("This will remove all listed records, are you sure?")) {
-        for (timestamp in records) {
+        Object.keys(records).forEach((timestamp, index) => {
           if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
-        }
+        });
         document.getElementById('records-body').innerHTML = "There is no record yet";
       }
     }
     else {
-      for (timestamp in records) {
+      Object.keys(records).forEach((timestamp, index) => {
         if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
-      }
+      });
       document.getElementById('records-body').innerHTML = "There is no record yet";
     }
   });
@@ -51,63 +54,20 @@ function restore_records() {
       recordsContent.innerHTML = "";
       recordList.classList = [ "record-list" ];
       recordList.innerHTML = "";
-  
-      for (timestamp in records) {
+
+      Object.keys(records).forEach((timestamp, index) => {
         // ignore settings if invalid timestamp 
-        if(!(new Date(parseInt(timestamp)).getTime())) continue;
-  
-        let record = records[timestamp];
-  
-        // create list item by js createElement so we could add eventListener to it easily
-        let listItem = document.createElement("li"); 
-        listItem.classList = [ "record-list-item" ];
-        listItem.setAttribute("data-key", timestamp);
-        listItem.innerHTML = `
-          <div class="record-title">
-            <button class="record-title-item button mod-remove" title="Delete record"></button>
-            <span class="record-title-item mod-date">${(new Date(parseInt(timestamp))).toLocaleString()}</span>
-            <span class="record-title-item mod-count">Count: ${record["count"]}</span>
-            <button class="record-title-item button mod-copy" title="Copy URLs"></button>
-          </div>
-          <div class="record-content">
-            <span class="record-content-item mod-urls">${record["urls"]}</span>
-          </div>
-        `;
-  
-        recordList.appendChild(listItem);
-        
-        // put the remove record function
-        let removeButton = listItem.querySelector("button.record-title-item.mod-remove");
-        if(removeButton) {
-          removeButton.addEventListener('click', () => {
-            chrome.storage.sync.remove(listItem.getAttribute("data-key"), () => {
-              listItem.remove();
-            });
-          });
+        if(new Date(parseInt(timestamp)).getTime()) {
+          let record = records[timestamp];
+
+          // create list item placeholder bcoz preact render can only replace node, not append/prepend
+          let recordPlaceholder = document.createElement("span");
+          recordPlaceholder.id = timestamp;
+          recordList.appendChild(recordPlaceholder);
+
+          render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
         }
-  
-        // put the copy to clipboard function
-        let copyButton = listItem.querySelector("button.record-title-item.mod-copy");
-        if(copyButton) {
-          copyButton.addEventListener('click', () => {
-            navigator.clipboard.writeText(record["urls"]).then(function() {
-              copyButton.classList.add("mod-success");
-              copyButton.innerText = "Copied!";
-              setTimeout(() => {
-                copyButton.classList.remove("mod-success");
-                copyButton.innerText = "";
-              }, 2000);
-            }, function() {
-              copyButton.classList.add("mod-fail");
-              copyButton.innerText = "Copy action failed! Please try again.";
-              setTimeout(() => {
-                copyButton.classList.remove("mod-fail");
-                copyButton.innerText = "";
-              }, 2000);
-            });
-          });
-        }
-      }
+      });
   
       recordsContent.appendChild(recordList);
     }
