@@ -5,6 +5,7 @@ WORKDIR /app
 
 # install parcel
 RUN yarn global add parcel-bundler
+RUN yarn global add tailwindcss
 
 # install app dependencies
 COPY package.json ./

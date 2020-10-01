@@ -2,20 +2,21 @@
   "name": "image-url-oneclick",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/kevinwong150/image-url-oneclick.git",
-  "author": "kevinwong150 <kevinwyl@yahoo.com.hk>",
+  "repository": "",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf dist .cache node_modules",
-    "watch": "yarn clean && mkdir dist && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node -d dist/src/ --public-url ./",
-    "build": "yarn clean && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
+    "build:tailwind": "tailwindcss build src/style/style.css -c ./tailwind.config.js -o src/style/style.css",
+    "watch": "yarn clean && mkdir dist && yarn build:tailwind && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node -d dist/src/ --public-url ./",
+    "build": "yarn clean && yarn build:tailwind && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
-    "preact": "^10.5.3"
+    "preact": "^10.5.3",
+    "tailwindcss": "^1.8.10"
   },
   "alias": {
     "react": "preact/compat",
