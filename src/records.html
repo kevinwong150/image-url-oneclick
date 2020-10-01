@@ -5,19 +5,34 @@
     <link rel="stylesheet" href="./style/style.css">
   </head>
   <body>
-    <header class="records-header">
-      <h1>Records</h1>
-      <button id="clear-all">Clear All</button>
-      <span>
-        Extension made for: <a target="_blank" href="https://www.simplephotogrid.com">https://www.simplephotogrid.com</a>
-      </span>
-      <a class="button mod-settings" href="options.html">
-        Settings
-      </a>
-    </header>
-    <div id="records-body" class="records-body">
-      There is no record yet
+    <div class="flex flex-col">
+      <header class="px-4 flex justify-center bg-dark text-light-light h-header">
+        <div class="max-w-screen-md flex-1 justify-center flex flex-col">
+          <h1 class="text-2xl">IMAGE URL ONECLICK</h1>
+          <span class="font-light">
+            Extension made for: <a target="_blank" href="https://www.simplephotogrid.com">https://www.simplephotogrid.com</a>
+          </span>
+        </div>
+      </header>
+      <main class="bg-light text-dark-dark flex flex-col items-center px-4">
+        <div class="max-w-screen-md flex justify-between w-full py-3">
+          <h1 class="text-2xl pr-4">RECORDS</h1>
+          <div class="flex space-x-2 text-base">
+            <button class="mod-settings rounded-md pl-10 h-8 w-32 flex items-center text-light-light bg-dark-light">
+              <a href="options.html">
+                Settings
+              </a>
+            </button>
+            <button class="mod-clear-all rounded-md pl-10 h-8 w-32 flex items-center text-light-light bg-dark-light" id="clear-all">Clear All</button>
+          </div>
+        </div>
+
+        <div id="records-body" class="max-w-screen-md">
+          There is no record yet
+        </div>
+      </main>
     </div>
+
     <script src="./js/records.js"></script>
   </body>
 </html>

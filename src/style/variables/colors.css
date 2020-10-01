@@ -1,8 +1,11 @@
-:root {
+html {
   --light-light: #FFFFFF;
-  --light: #FAFAFA;
-  --light-dark: #666666;
+  --light: #f3f3f3;
+  --dark-light: #6e757c;
+  --dark: #2e4050;
+  --dark-dark: #353a40;
 
-  --correct: #32bea6;
-  --incorrect: #e04f5f;
+  --transparent: transparent;
+  --correct: #53a451;
+  --incorrect: #cb444b;
 }
