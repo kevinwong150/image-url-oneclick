@@ -1,7 +1,8 @@
 @import "tailwindcss/base";
 @import "tailwindcss/utilities";
 
-@import "./variables/assets.css";
-@import "./variables/colors.css";
+@import "./variables/assets.less";
+@import "./variables/colors.less";
+@import "./variables/fonts.less";
 
 @import "./app.less";

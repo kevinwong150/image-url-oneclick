@@ -49,7 +49,7 @@ export default class Record extends Component {
       case "fail":
         return {
           buttonText: "Copy action failed! Please try again.",
-          buttonModClass: "mod-fail"
+          buttonModClass: "mod-error"
         }
       case "success":
         return {
@@ -66,15 +66,15 @@ export default class Record extends Component {
 
   render({ timestamp, record }, { copyState }) {
     return (
-      <li class="record-list-item" id={timestamp}>
-        <div class="record-title">
-          <button class="record-title-item button mod-remove" title="Delete record" onclick={this.onClickRemove}></button>
-          <span class="record-title-item mod-date">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
-          <span class="record-title-item mod-count">Count: {record["count"]}</span>
-          <button class={"record-title-item button mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
+      <li class="bg-light-light break-all p-4 mb-4" id={timestamp}>
+        <div class="flex items-center mb-2 font-bold">
+          <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
+          <span class="ml-4">Count: {record["count"]}</span>
+          <button class={"ml-4 h-6 w-6 font-bold mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
+          <button class="ml-auto h-6 w-6 font-bold mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
-        <div class="record-content">
-          <span class="record-content-item mod-urls">{record["urls"]}</span>
+        <div class="">
+          <span class="">{record["urls"]}</span>
         </div>
       </li>
     );

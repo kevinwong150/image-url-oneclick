@@ -66,6 +66,8 @@ function restore_records() {
           recordList.appendChild(recordPlaceholder);
 
           render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
+
+          recordPlaceholder.remove();
         }
       });
   
