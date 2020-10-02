@@ -1,4 +1,4 @@
-body {
+/* body {
   padding: 0 20px;
   margin: 0;
 }
@@ -111,4 +111,4 @@ dl dd label input[type='checkbox']::before {
 
 dl dd label input[type='checkbox']:checked::before {
   left: calc(50% + 5px);
-}
+} */

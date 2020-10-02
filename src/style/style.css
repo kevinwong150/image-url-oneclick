@@ -1,22 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/utilities";
 
-
 @import "./variables/assets.css";
 @import "./variables/colors.css";
 
-@import "./options.css";
-@import "./records.css";
-
-body {
-  @apply p-0 m-0;
-}
-
-/* button {
-  &.mod-settings {
-    @apply bg-no-repeat;
-    background-position: left 12px center;
-    background-size: 20px 20px;
-    background-image: var(--settings);
-  }
-} */
+@import "./app.css";
