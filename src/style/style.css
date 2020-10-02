@@ -4,4 +4,4 @@
 @import "./variables/assets.css";
 @import "./variables/colors.css";
 
-@import "./app.css";
+@import "./app.less";
