@@ -4268,8 +4268,8 @@ posthtml@^0.13.1:
 
 preact@^10.5.3:
   version "10.5.3"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.3.tgz#c19d509f60e6adca5da8efd421706b3d0a1fb636"
-  integrity sha512-g9i3d4obUJ24idLW/wuKWATVj6YFjxXDN+POu4u68YrI5dypUOu9Z3lb8/M4kr2dojcwq3H1GSgfpQkFX7y5Zw==
+  resolved "https://artifactory.cathaypacific.com:443/artifactory/api/npm/npm-common/preact/-/preact-10.5.3.tgz#c19d509f60e6adca5da8efd421706b3d0a1fb636"
+  integrity sha1-wZ1Qn2DmrcpdqO/UIXBrPQoftjY=
 
 prelude-ls@~1.1.2:
   version "1.1.2"
