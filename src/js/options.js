@@ -1,4 +1,14 @@
+import { h, render, Component } from "preact";
+import Page from "./Page";
+
 document.addEventListener("DOMContentLoaded", () => {
+  const placeholder = document.getElementById('placeholder-settings');
+  if(placeholder){
+    render(<Page page="settings"/>, placeholder.parentElement);
+  }
+});
+
+export function restore_settings() {
   chrome.storage.sync.get([
     "settings-removeTabs?", 
     "settings-removeAllConfirmation?"
@@ -32,4 +42,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   console.log("option loaded");
-});
+}

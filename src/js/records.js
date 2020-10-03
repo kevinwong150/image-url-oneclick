@@ -1,5 +1,6 @@
 import { h, render, Component } from "preact";
 import Record from "./Record";
+import Page from "./Page";
 
 let hasConfirm = true;
 
@@ -18,63 +19,6 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
     hasConfirm = changes["settings-removeAllConfirmation?"]["newValue"];
   }
 });
-
-function clear_all_records() {
-  chrome.storage.sync.get(null, function(records) {
-    // terminate if no storage
-    if (Object.keys(records).filter((record) => /^settings-/.test(record)).length === 0)
-      return;
-
-    if(hasConfirm) {
-      if(confirm("This will remove all listed records, are you sure?")) {
-        Object.keys(records).forEach((timestamp, index) => {
-          if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
-        });
-        document.getElementById('records-body').innerHTML = "There is no record yet";
-      }
-    }
-    else {
-      Object.keys(records).forEach((timestamp, index) => {
-        if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
-      });
-      document.getElementById('records-body').innerHTML = "There is no record yet";
-    }
-  });
-}
-
-function restore_records() {
-  chrome.storage.sync.get(null, function(records) {
-    // terminate if no storage
-    if (Object.keys(records).filter(record => !(/^settings-.+/.test(record))).length === 0) {
-      return;
-    }
-    else {
-      let recordsContent = document.getElementById('records-body');
-      let recordList = document.createElement("ul"); 
-      recordsContent.innerHTML = "";
-      recordList.classList = [ "record-list" ];
-      recordList.innerHTML = "";
-
-      Object.keys(records).forEach((timestamp, index) => {
-        // ignore settings if invalid timestamp 
-        if(new Date(parseInt(timestamp)).getTime()) {
-          let record = records[timestamp];
-
-          // create list item placeholder bcoz preact render can only replace node, not append/prepend
-          let recordPlaceholder = document.createElement("span");
-          recordPlaceholder.id = timestamp;
-          recordList.appendChild(recordPlaceholder);
-
-          render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
-
-          recordPlaceholder.remove();
-        }
-      });
-  
-      recordsContent.appendChild(recordList);
-    }
-  });
-};
 
 // message listener 
 chrome.runtime.onMessage.addListener(
@@ -118,7 +62,66 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // build records page on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', restore_records);
+document.addEventListener('DOMContentLoaded', () => {
+  const placeholder = document.getElementById('placeholder-records');
+  if(placeholder){
+    render(<Page page="records"/>, placeholder.parentElement);
+  }
+});
 
-// clear all storage
-document.getElementById('clear-all').addEventListener('click', clear_all_records);
+export function clear_all_records() {
+  chrome.storage.sync.get(null, function(records) {
+    // terminate if no storage
+    if (Object.keys(records).filter((record) => /^settings-/.test(record)).length === 0)
+      return;
+
+    if(hasConfirm) {
+      if(confirm("This will remove all listed records, are you sure?")) {
+        Object.keys(records).forEach((timestamp, index) => {
+          if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
+        });
+        document.getElementById('records-body').innerHTML = "There is no record yet";
+      }
+    }
+    else {
+      Object.keys(records).forEach((timestamp, index) => {
+        if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
+      });
+      document.getElementById('records-body').innerHTML = "There is no record yet";
+    }
+  });
+}
+
+export function restore_records() {
+  chrome.storage.sync.get(null, function(records) {
+    // terminate if no storage
+    if (Object.keys(records).filter(record => !(/^settings-.+/.test(record))).length === 0) {
+      return;
+    }
+    else {
+      let recordsContent = document.getElementById('records-body');
+      let recordList = document.createElement("ul"); 
+      recordsContent.innerHTML = "";
+      recordList.classList = [ "record-list" ];
+      recordList.innerHTML = "";
+
+      Object.keys(records).forEach((timestamp, index) => {
+        // ignore settings if invalid timestamp 
+        if(new Date(parseInt(timestamp)).getTime()) {
+          let record = records[timestamp];
+
+          // create list item placeholder bcoz preact render can only replace node, not append/prepend
+          let recordPlaceholder = document.createElement("span");
+          recordPlaceholder.id = timestamp;
+          recordList.appendChild(recordPlaceholder);
+
+          render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
+
+          recordPlaceholder.remove();
+        }
+      });
+  
+      recordsContent.appendChild(recordList);
+    }
+  });
+};
