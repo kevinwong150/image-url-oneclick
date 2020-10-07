@@ -1,4 +1,5 @@
 import { h, render, Component } from "preact";
+import "crx-hotreload";
 import Page from "./Page";
 
 document.addEventListener("DOMContentLoaded", () => {

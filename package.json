@@ -5,18 +5,18 @@
   "repository": "",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist .cache node_modules",
-    "build:less": "lessc src/style/app.less src/style/app.less",
-    "build:tailwind": "yarn build:less && tailwindcss build src/style/style.css -c ./tailwind.config.js -o src/style/style.css",
-    "watch": "yarn clean && mkdir dist && yarn build:tailwind && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node --bundle-node-modules -d dist/src/ --public-url ./",
-    "build": "yarn clean && yarn build:tailwind && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
+    "clear": "rm -rf dist .cache",
+    "watch": "yarn clear && mkdir dist && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node --bundle-node-modules -d dist/src --public-url ./",
+    "build": "yarn clear && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
     "cssnano": "^4.1.10",
-    "postcss-import": "^12.0.1",
-    "tailwindcss": "^1.8.10"
+    "less": "^3.12.2",
+    "tailwindcss": "^1.8.11"
   },
   "dependencies": {
+    "crx-hotreload": "^1.0.4",
     "parcel-bundler": "^1.12.4",
     "preact": "^10.5.3"
   },

@@ -1,4 +1,5 @@
 import { h, render, Component } from "preact";
+import "crx-hotreload";
 import Record from "./Record";
 import Page from "./Page";
 

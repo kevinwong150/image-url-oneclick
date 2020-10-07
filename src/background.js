@@ -1,3 +1,5 @@
+import "crx-hotreload";
+
 // init records status
 let isRecordOpen = false;
 let recordsTabId = null;
