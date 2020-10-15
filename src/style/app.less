@@ -1,10 +1,10 @@
 button {
   @apply outline-none bg-no-repeat;
-  
+
   &.mod-settings {
     background-position: left 20px center;
-    background-size: 20px 20px;
     background-image: var(--settings);
+    background-size: 20px 20px;
   }
   &.mod-clear-all {
     background-position: left 20px center;
@@ -35,5 +35,65 @@ button {
     background-position: left 20px center;
     background-size: 20px 20px;
     background-image: var(--back);
+  }
+}
+
+.settings-list {
+  dt {
+    @apply text-sm;
+
+    &:not(:first-of-type) {
+      @apply mt-4;
+    }
+  }
+
+  dd {
+    label {
+      @apply inline-flex items-center relative py-4 cursor-pointer;
+
+      &::before,
+      &::after {
+        @apply absolute flex items-center justify-center z-10 text-light font-bold;
+        width: calc(50% - 5px);
+      }
+
+      &::before {
+        content: "Yes";
+        left: 10px;
+      }
+
+      &::after {
+        content: "No";
+        right: 10px;
+      }
+
+      input[type="checkbox"] {
+        @apply cursor-pointer relative appearance-none border-none outline-none bg-dark-light m-0 flex items-center;
+        height: 50px;
+        width: 100px;
+        border-radius: 25px;
+        transition: 0.3s background-color ease-in-out;
+        will-change: background-color;
+
+        &:checked {
+          @apply bg-success;
+
+          &::before {
+            left: calc(50% + 5px);
+          }
+        }
+
+        &::before {
+          @apply absolute bg-light z-20;
+          content: "";
+          left: 5px;
+          height: calc(50px - 10px);
+          width: calc(50px - 10px);
+          transition: 0.3s left ease-in-out;
+          will-change: left;
+          border-radius: 25px;
+        }
+      }
+    }
   }
 }

@@ -59,13 +59,13 @@ export default class Main extends Component {
         return (
           <Fragment>
             <div id="options-body" class="max-w-screen-md w-full">
-              <dl>
-                <dt><b>Remove image tabs after saved to extension?</b></dt>
+              <dl class="settings-list">
+                <dt>Remove image tabs after saved to extension?</dt>
                 <dd>
                   <label id="label-removeTabs?"></label>
                 </dd>
                 
-                <dt><b>Show confirm message when remove all records?</b></dt>
+                <dt>Show confirm message when remove all records?</dt>
                 <dd>
                   <label id="label-removeAllConfirmation?"></label>
                 </dd>
