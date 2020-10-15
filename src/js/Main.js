@@ -1,5 +1,6 @@
 import { h, render, Component, Fragment } from "preact";
 import { clear_all_records } from "./records";
+import { EmptyRecord } from "./Record";
 
 export default class Main extends Component {
   constructor(props) {
@@ -51,7 +52,7 @@ export default class Main extends Component {
         return (
           <Fragment>
             <div id="records-body" class="max-w-screen-md w-full">
-              There is no record yet
+              <EmptyRecord />
             </div>
           </Fragment>
         );

@@ -1,5 +1,8 @@
 import { h, render, Component } from "preact";
 
+export function EmptyRecord() {
+  return <span class="text-sm">There is no record yet</span>
+}
 export default class Record extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +21,12 @@ export default class Record extends Component {
       let thisRecord = document.getElementById(this.props.timestamp);
       if (thisRecord) {
         thisRecord.remove();
+        chrome.storage.sync.get(null, function (records) {
+          if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
+            document.getElementById('records-body').innerHTML = "";
+            render(<EmptyRecord />, document.getElementById('records-body'));
+          }
+        });
       }
     });
   }

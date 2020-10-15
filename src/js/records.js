@@ -1,6 +1,6 @@
 import { h, render, Component } from "preact";
 import "crx-hotreload";
-import Record from "./Record";
+import Record, { EmptyRecord } from "./Record";
 import Page from "./Page";
 
 let hasConfirm = true;
@@ -81,14 +81,16 @@ export function clear_all_records() {
         Object.keys(records).forEach((timestamp, index) => {
           if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
         });
-        document.getElementById('records-body').innerHTML = "There is no record yet";
+        document.getElementById('records-body').innerHTML = "";
+        render(<EmptyRecord />, document.getElementById('records-body'));
       }
     }
     else {
       Object.keys(records).forEach((timestamp, index) => {
         if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
       });
-      document.getElementById('records-body').innerHTML = "There is no record yet";
+      document.getElementById('records-body').innerHTML = "";
+      render(<EmptyRecord />, document.getElementById('records-body'));
     }
   });
 }
