@@ -36,8 +36,17 @@ button {
     background-size: 20px 20px;
     background-image: var(--back);
   }
+  &.mod-restore {
+    @apply bg-center;
+    background-size: 20px 20px;
+    background-image: var(--restore);
+    float: right;
+  }
 }
 
+.urls-item{
+  overflow: auto;
+}
 .settings-list {
   dt {
     @apply text-sm;

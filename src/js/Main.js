@@ -70,6 +70,11 @@ export default class Main extends Component {
                 <dd>
                   <label id="label-removeAllConfirmation?"></label>
                 </dd>
+
+                <dt>Delete record after restore tabs?</dt>
+                <dd>
+                  <label id="label-restoreConfirmation?"></label>
+                </dd>
               </dl>
             </div>
           </Fragment>

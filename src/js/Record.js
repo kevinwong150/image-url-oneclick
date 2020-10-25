@@ -14,9 +14,11 @@ export default class Record extends Component {
 
     this.onClickRemove = this.onClickRemove.bind(this);
     this.onClickCopy = this.onClickCopy.bind(this);
+    this.onClickRestore = this.onClickRestore.bind(this);
   }
 
   onClickRemove = () => {
+    console.log(this.props)
     chrome.storage.sync.remove(this.props.timestamp, () => {
       let thisRecord = document.getElementById(this.props.timestamp);
       if (thisRecord) {
@@ -53,6 +55,59 @@ export default class Record extends Component {
     }.bind(this));
   }
 
+   onClickRestore =  () => {
+    var openedUrls = [];
+    var urls = this.props.record["urls"].split("|");
+    var tabId;
+    var closedTab;
+    var timestamp = this.props.timestamp;
+
+    console.log(this.props);
+    chrome.storage.sync.get([
+      "settings-restoreConfirmation?",
+      
+    ], function (records) {
+      if("settings-restoreConfirmation?" in records) {
+        closedTab = records["settings-restoreConfirmation?"];
+      }
+    
+      if(closedTab){
+        let thisRecord = document.getElementById(timestamp);
+        console.log(timestamp)
+        chrome.storage.sync.remove(timestamp, () => {
+          let thisRecord = document.getElementById(timestamp);
+          if (thisRecord) {
+            thisRecord.remove();
+            chrome.storage.sync.get(null, function (records) {
+              if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
+                document.getElementById('records-body').innerHTML = "";
+                render(<EmptyRecord />, document.getElementById('records-body'));
+              }
+            });
+          }
+        });
+      }
+    });
+    
+   
+    chrome.tabs.query({windowType:'normal'}, function(tabs) {
+      // console.log('Number of open tabs in all normal browser windows:',tabs);
+      for (var pos in tabs){
+          openedUrls.push(tabs[pos].url)
+          if(tabs[pos].active){
+            tabId = tabs[pos].id;
+          }
+      } 
+      for (var link in urls ){
+        if(!openedUrls.includes(urls[link])){
+          console.log("not in opened", urls[link])
+          chrome.tabs.create({url:urls[link]});
+          chrome.tabs.update(tabId, {selected: true});
+        }
+      }
+    }); 
+  }
+
   getCopyButtonDetails = (copyState) => {
     switch(copyState) {
       case "fail":
@@ -75,7 +130,7 @@ export default class Record extends Component {
 
   render({ timestamp, record }, { copyState }) {
     return (
-      <li class="bg-light-light break-all p-4 mb-4 rounded-md" id={timestamp}>
+      <li class="bg-light-light break-all p-4 mb-4 rounded-md urls-item" id={timestamp}>
         <div class="flex items-center mb-2 font-bold">
           <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="ml-4">Count: {record["count"]}</span>
@@ -83,8 +138,9 @@ export default class Record extends Component {
           <button class="ml-auto h-6 w-6 font-bold mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
         <div class="">
-          <span class="">{record["urls"]}</span>
+          <span class="urls">{record["urls"]}</span>
         </div>
+        <button class="ml-auto h-6 w-6 font-bold mod-restore" title="Restore record" onclick={this.onClickRestore}></button>
       </li>
     );
   }
