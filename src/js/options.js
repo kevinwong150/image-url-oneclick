@@ -13,7 +13,7 @@ export function restore_settings() {
   chrome.storage.sync.get([
     "settings-removeTabs?", 
     "settings-removeAllConfirmation?",
-    "settings-restoreConfirmation?"
+    "settings-removeRecordOnRestore?"
   ], function (records) {
     // terminate if no storage
     if (Object.keys(records).length === 0) 
@@ -42,16 +42,16 @@ export function restore_settings() {
     });
     document.getElementById("label-removeAllConfirmation?").appendChild(checkboxRemoveAllConfirmation);
 
-    let checkboxRestoreConfirmation = document.createElement("input");
-    checkboxRestoreConfirmation.name = "restoreConfirmation?";
-    checkboxRestoreConfirmation.type = "checkbox";
-    checkboxRestoreConfirmation.checked = "settings-restoreConfirmation?" in records ? records["settings-restoreConfirmation?"] : true ;
-    checkboxRestoreConfirmation.addEventListener("change", (e) => {
-      chrome.storage.sync.set({["settings-restoreConfirmation?"]: e.target.checked}, () => {
+    let checkboxRemoveRecordOnRestore = document.createElement("input");
+    checkboxRemoveRecordOnRestore.name = "removeRecordOnRestore?";
+    checkboxRemoveRecordOnRestore.type = "checkbox";
+    checkboxRemoveRecordOnRestore.checked = "settings-removeRecordOnRestore?" in records ? records["settings-removeRecordOnRestore?"] : true ;
+    checkboxRemoveRecordOnRestore.addEventListener("change", (e) => {
+      chrome.storage.sync.set({["settings-removeRecordOnRestore?"]: e.target.checked}, () => {
         console.log("Settings updated");
       });
     });
-    document.getElementById("label-restoreConfirmation?").appendChild(checkboxRestoreConfirmation);
+    document.getElementById("label-removeRecordOnRestore?").appendChild(checkboxRemoveRecordOnRestore);
 });
 
   console.log("option loaded");

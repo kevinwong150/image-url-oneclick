@@ -71,9 +71,9 @@ export default class Main extends Component {
                   <label id="label-removeAllConfirmation?"></label>
                 </dd>
 
-                <dt>Delete record after restore tabs?</dt>
+                <dt>Delete record on restore tabs?</dt>
                 <dd>
-                  <label id="label-restoreConfirmation?"></label>
+                  <label id="label-removeRecordOnRestore?"></label>
                 </dd>
               </dl>
             </div>
