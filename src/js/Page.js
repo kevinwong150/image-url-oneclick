@@ -1,6 +1,6 @@
 import { h, render, Component } from "preact";
-import { restore_records } from "./records";
-import { restore_settings } from "./options";
+import { restore_records_page } from "./records";
+import { restore_settings_page } from "./options";
 import Header from "./Header";
 import Main from "./Main";
 
@@ -12,10 +12,10 @@ export default class Page extends Component {
   componentDidMount() {
     switch (this.props.page) {
       case "records":
-        restore_records();
+        restore_records_page();
         break;
       case "settings":
-        restore_settings();
+        restore_settings_page();
         break;
       default:
         break;

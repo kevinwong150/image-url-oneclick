@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(
         break;
       // use message to implement the live update when record page is highlighted
       case "updateList":
-        restore_records();
+        restore_records_page();
         console.log("recordStatus:", "updated");
         sendResponse({recordStatus: "updated"});
         break;
@@ -95,7 +95,7 @@ export function clear_all_records() {
   });
 }
 
-export function restore_records() {
+export function restore_records_page() {
   chrome.storage.sync.get(null, function(records) {
     // terminate if no storage
     if (Object.keys(records).filter(record => !(/^settings-.+/.test(record))).length === 0) {

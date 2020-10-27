@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-export function restore_settings() {
+export function restore_settings_page() {
   chrome.storage.sync.get([
     "settings-removeTabs?", 
     "settings-removeAllConfirmation?",
