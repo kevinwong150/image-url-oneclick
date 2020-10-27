@@ -1,5 +1,5 @@
 // const
-const headerHeight = "74px";
+const headerHeight = "76px";
 
 module.exports = {
   future: {

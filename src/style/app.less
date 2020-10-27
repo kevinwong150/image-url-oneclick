@@ -40,6 +40,11 @@ button {
     @apply bg-center;
     background-size: 20px 20px;
     background-image: var(--restore);
+
+    &.mod-restore-some, &.mod-restore-all, &.mod-noop {
+      @apply w-auto bg-left pl-6 text-success pointer-events-none;
+      background-image: var(--success);
+    }
   }
 }
 

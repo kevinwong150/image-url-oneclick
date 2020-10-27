@@ -3,18 +3,30 @@ import { h, render, Component } from "preact";
 export function EmptyRecord() {
   return <span class="text-sm">There is no record yet</span>
 }
+
 export default class Record extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      // type copyState = "normal" | "success" | "fail"
-      copyState: "normal"
+      copyState: "normal", // type copyState = "normal" | "success" | "fail"
+      restoreState: "normal" // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
     };
 
     this.onClickRemove = this.onClickRemove.bind(this);
     this.onClickCopy = this.onClickCopy.bind(this);
     this.onClickRestore = this.onClickRestore.bind(this);
+  }
+
+  setTempState(stateName, state) {
+    this.setState({
+      [stateName]: state
+    });
+    setTimeout(() => {
+      this.setState({
+        [stateName]: "normal"
+      });
+    }, 2000);
   }
 
   onClickRemove = () => {
@@ -34,23 +46,9 @@ export default class Record extends Component {
 
   onClickCopy = () => {
     navigator.clipboard.writeText(this.props.record["urls"]).then(function() {
-      this.setState({
-        copyState: "success"
-      });
-      setTimeout(() => {
-        this.setState({
-          copyState: "normal"
-        });
-      }, 2000);
+      this.setTempState("copyState", "success");
     }.bind(this), function() {
-      this.setState({
-        copyState: "fail"
-      });
-      setTimeout(() => {
-        this.setState({
-          copyState: "normal"
-        });
-      }, 2000);
+      this.setTempState("copyState", "fail");
     }.bind(this));
   }
 
@@ -58,10 +56,21 @@ export default class Record extends Component {
     chrome.tabs.query({windowType:'normal'}, function(tabs) {
       let recordsTab = tabs.find(tab => tab.active); // assume current tab is the record tab
       let openingTabsUrl = tabs.map(tab => tab.url);
-      let openingRecordUrl = this.props.record["urls"].split("|").filter(url => !openingTabsUrl.includes(url));
+      let recordUrls = this.props.record["urls"].split("|");
+      let openRecordUrl = recordUrls.filter(url => !openingTabsUrl.includes(url));
 
       // restore record urls
-      openingRecordUrl.map(url => chrome.tabs.create({url:url}));
+      openRecordUrl.map(url => chrome.tabs.create({url:url}));
+
+      if(openRecordUrl.length === recordUrls.length) {
+        this.setTempState("restoreState", "all-restored");
+      }
+      else if (openRecordUrl.length > 0 && openRecordUrl.length < recordUrls.length) {
+        this.setTempState("restoreState", "partially-restored");
+      }
+      else if (openRecordUrl.length === 0) {
+        this.setTempState("restoreState", "noop");
+      }
 
       // select record page after restore record
       if(recordsTab) chrome.tabs.update(recordsTab.id, {selected: true});
@@ -94,7 +103,7 @@ export default class Record extends Component {
       case "fail":
         return {
           buttonText: "Copy action failed! Please try again.",
-          buttonModClass: "mod-error"
+          buttonModClass: "mod-success"
         }
       case "success":
         return {
@@ -109,7 +118,32 @@ export default class Record extends Component {
     } 
   }
 
-  render({ timestamp, record }, { copyState }) {
+  getRestoreButtonDetails = (restoreState) => {
+    switch(restoreState) {
+      case "noop":
+        return {
+          buttonText: "All images are already opened, please check your tabs.",
+          buttonModClass: "mod-noop"
+        }
+      case "partially-restored":
+        return {
+          buttonText: "Restored, some images are already opened.",
+          buttonModClass: "mod-restore-some"
+        }
+      case "all-restored":
+        return {
+          buttonText: "Restored!",
+          buttonModClass: "mod-restore-all"
+        }
+      default:
+        return {
+          buttonText: "",
+          buttonModClass: ""
+        }
+    } 
+  }
+
+  render({ timestamp, record }, { copyState, restoreState }) {
     return (
       <li class="bg-light-light break-all p-4 mb-4 rounded-md overflow-auto" id={timestamp}>
         <div class="flex items-center mb-2 font-bold">
@@ -121,7 +155,7 @@ export default class Record extends Component {
         <div class="">
           <span class="urls">{record["urls"]}</span>
         </div>
-        <button class="ml-auto h-6 w-6 font-bold flex mod-restore" title="Restore record" onclick={this.onClickRestore}></button>
+        <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
       </li>
     );
   }
