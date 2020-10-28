@@ -9,6 +9,7 @@ export default class Record extends Component {
     super(props);
 
     this.state = {
+      removed: false,
       copyState: "normal", // type copyState = "normal" | "success" | "fail"
       restoreState: "normal" // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
     };
@@ -18,15 +19,17 @@ export default class Record extends Component {
     this.onClickRestore = this.onClickRestore.bind(this);
   }
 
-  setTempState(stateName, state) {
+  setTempState(stateName, state, timeout) {
     this.setState({
       [stateName]: state
     });
     setTimeout(() => {
-      this.setState({
-        [stateName]: "normal"
-      });
-    }, 2000);
+      if(!this.state.removed) {
+        this.setState({
+          [stateName]: "normal"
+        });
+      }
+    }, timeout);
   }
 
   onClickRemove = () => {
@@ -34,6 +37,9 @@ export default class Record extends Component {
       let thisRecord = document.getElementById(this.props.timestamp);
       if (thisRecord) {
         thisRecord.remove();
+        this.setState({
+          removed: true
+        });
         chrome.storage.sync.get(null, function (records) {
           if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
             document.getElementById('records-body').innerHTML = "";
@@ -46,9 +52,9 @@ export default class Record extends Component {
 
   onClickCopy = () => {
     navigator.clipboard.writeText(this.props.record["urls"]).then(function() {
-      this.setTempState("copyState", "success");
+      this.setTempState("copyState", "success", 2000);
     }.bind(this), function() {
-      this.setTempState("copyState", "fail");
+      this.setTempState("copyState", "fail", 2000);
     }.bind(this));
   }
 
@@ -63,13 +69,13 @@ export default class Record extends Component {
       openRecordUrl.map(url => chrome.tabs.create({url:url}));
 
       if(openRecordUrl.length === recordUrls.length) {
-        this.setTempState("restoreState", "all-restored");
+        this.setTempState("restoreState", "all-restored", 3000);
       }
       else if (openRecordUrl.length > 0 && openRecordUrl.length < recordUrls.length) {
-        this.setTempState("restoreState", "partially-restored");
+        this.setTempState("restoreState", "partially-restored", 3000);
       }
       else if (openRecordUrl.length === 0) {
-        this.setTempState("restoreState", "noop");
+        this.setTempState("restoreState", "noop", 3000);
       }
 
       // select record page after restore record
@@ -84,7 +90,10 @@ export default class Record extends Component {
           if (thisRecord) {
             chrome.storage.sync.remove(timestamp, () => {
               thisRecord.remove();
-  
+              this.setState({
+                removed: true
+              });
+
               chrome.storage.sync.get(null, function (records) {
                 if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
                   document.getElementById('records-body').innerHTML = "";
@@ -143,9 +152,9 @@ export default class Record extends Component {
     } 
   }
 
-  render({ timestamp, record }, { copyState, restoreState }) {
+  render({ timestamp, record }, { removed, copyState, restoreState }) {
     return (
-      <li class="bg-light-light break-all p-4 mb-4 rounded-md overflow-auto" id={timestamp}>
+      <li class={"bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex items-center mb-2 font-bold">
           <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="ml-4">Count: {record["count"]}</span>
