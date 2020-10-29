@@ -19,6 +19,7 @@ module.exports = {
       transparent: "var(--transparent)",
       success: "var(--correct)",
       error: "var(--incorrect)",
+      warning: "var(--warning)",
     },
     extend: {
       spacing: {
