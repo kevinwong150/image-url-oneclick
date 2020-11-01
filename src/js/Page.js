@@ -3,6 +3,7 @@ import { restore_records_page } from "./records";
 import { restore_settings_page } from "./options";
 import Header from "./Header";
 import Main from "./Main";
+import Footer from "./Footer";
 
 export default class Page extends Component {
   constructor(props) {
@@ -28,6 +29,8 @@ export default class Page extends Component {
         <Header />
         
         <Main page={props.page}/>
+
+        <Footer />
       </div>
     );
   }
