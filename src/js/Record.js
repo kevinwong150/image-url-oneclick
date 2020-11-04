@@ -154,7 +154,7 @@ export default class Record extends Component {
 
   render({ timestamp, record }, { removed, copyState, restoreState }) {
     return (
-      <li class={"bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
+      <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex items-center mb-2 font-bold">
           <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="ml-4">Count: {record["count"]}</span>

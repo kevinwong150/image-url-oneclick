@@ -25,6 +25,9 @@ module.exports = {
       spacing: {
         header: headerHeight,
       },
+      boxShadow: {
+        regular: `0 0 6px var(--shadow)`,
+      }
     },
   },
   variants: {},
