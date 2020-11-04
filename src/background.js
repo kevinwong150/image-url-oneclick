@@ -11,7 +11,8 @@ let isRemoveTabs = false;
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({
     "settings-removeTabs?": false,
-    "settings-removeAllConfirmation?": true
+    "settings-removeAllConfirmation?": true,
+    "settings-removeRecordOnRestore?": true
   }, function() {
     console.log("Initialized settings");
   });
