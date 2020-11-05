@@ -11,7 +11,6 @@
     "128": "static/icon_128.png"
   },
   "permissions": [
-    "activeTab",
     "tabs",
     "storage",
     "contextMenus"
