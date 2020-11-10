@@ -6,13 +6,26 @@
   "license": "MIT",
   "scripts": {
     "clear": "rm -rf dist .cache",
-    "watch": "yarn clear && mkdir dist && cp -R static dist/static && cp manifest.json dist/ && parcel watch src/{records.html,options.html,background.js} -t node --bundle-node-modules -d dist/src --public-url ./",
-    "build": "yarn clear && parcel build src/{records.html,options.html,background.js} -d dist/src/ --public-url ./ && cp -R static dist/static && cp manifest.json dist/"
+    "watch": "yarn clear && parcel watch src/{records.html,options.html,background.js} -d dist/src --public-url ./ -t node --bundle-node-modules",
+    "build": "yarn clear && parcel build src/{records.html,options.html,background.js} -d dist/src --public-url ./"
+  },
+  "staticFiles": {
+    "staticPath": [
+      {
+        "staticPath": "static",
+        "staticOutDir": "../static/"
+      },
+      {
+        "staticPath": "manifest.json",
+        "staticOutDir": "../"
+      }
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "cssnano": "^4.1.10",
     "less": "^3.12.2",
+    "parcel-plugin-static-files-copy": "^2.5.0",
     "tailwindcss": "^1.8.11"
   },
   "dependencies": {
