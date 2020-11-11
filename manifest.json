@@ -1,7 +1,7 @@
 {
   "name": "Image URL Oneclick",
   "version": "1.0",
-  "description": "Get image URL in one click",
+  "description": "One click to save your opened image tabs into browsers",
   "manifest_version": 2,
   "browser_action": {
     "default_icon": "static/icon_32.png"
