@@ -33,6 +33,9 @@
     "crx-hotreload": "^1.0.4",
     "preact": "^10.5.3"
   },
+  "resolutions": {
+    "parcel-bundler/**/node-forge": "^0.10.0"
+  },
   "alias": {
     "react": "preact/compat",
     "react-dom/test-utils": "preact/test-utils",
