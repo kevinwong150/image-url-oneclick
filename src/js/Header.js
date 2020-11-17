@@ -7,7 +7,7 @@ export default class Header extends Component {
 
   render() {
     return (
-      <header class="px-4 flex justify-center bg-dark text-light-light h-header">
+      <header class="px-4 flex justify-center bg-dark text-light-light h-header flex-shrink-0">
         <div class="max-w-screen-md flex-1 justify-center flex flex-col">
           <h1 class="text-2xl">IMAGE URL ONECLICK</h1>
           <span class="font-light">

@@ -124,7 +124,7 @@ chrome.contextMenus.create({
 function isImageURL(url) {
   // finding suffix:
   // return(url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
-  return(url.toLowerCase().match(/\.(jpeg|jpg|gif|png|svg|webp)|^data:image\/(jpeg|jpg|gif|png|svg|webp);base64,.+/) != null);
+  return(url.toLowerCase().match(/(\.|\=)(jpeg|jpg|gif|png|svg|webp)|^data:image\/(jpeg|jpg|gif|png|svg|webp);base64,.+/) != null);
 }
 
 
