@@ -13,7 +13,9 @@
   "permissions": [
     "tabs",
     "storage",
-    "contextMenus"
+    "contextMenus",
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
     "scripts": ["./src/background.js"],

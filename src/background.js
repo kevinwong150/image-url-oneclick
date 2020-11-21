@@ -1,4 +1,5 @@
 import "crx-hotreload";
+import 'regenerator-runtime/runtime'
 
 // init records status
 let isRecordOpen = false;
@@ -34,17 +35,47 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 });
 
+// resolve a string(an image url) or reject
+function getSuspectImage(tabId) {
+  return new Promise((resolve, reject) => {
+      chrome.tabs.executeScript(tabId, {
+        "code": "Array.from(document.images).map(image => image.src)"
+      }, result => {
+        // check error of accessing url with no permissions, e.g. chrome://...
+        const lastErr = chrome.runtime.lastError;
+        // if there is lastErr and sanity check result 
+        if(lastErr || !result) {
+          reject();
+        }
+        // if there are more than 1 result?, I don't know if it is possible 
+        else if (result.length !== 1) {
+          reject();
+        }
+        else {
+          result[0].length === 1 ? resolve(result[0][0]) : reject();
+        }
+      }); 
+  });
+}
+
 //click extension icon will save image url in all opening tabs to storage
 chrome.browserAction.onClicked.addListener(function(from_tab) {
-  chrome.tabs.getAllInWindow(null, function(tabs){
-    let imageURLs = [];
-
+  chrome.tabs.getAllInWindow(null, async function(tabs){
     // find image urls from all tabs
-    tabs.map(tab => {
-      let tabURL = tab.url;
-      if(isImageURL(tabURL)) {
-        imageURLs.push(tabURL);
+    let imageURLs = await Promise.all(tabs.map(async tab => {
+      try {
+        let suspectImage = await getSuspectImage(tab.id);
+        if (suspectImage == tab.url || isImageURL(tab.url)) {
+          return tab.url;
+        }
+        else {
+          return false;
+        }
+      } catch(err) {
+        return false;
       }
+    })).then(urls => {
+      return urls.filter(url => url);
     });
 
     // set records if there is any captured
@@ -122,9 +153,7 @@ chrome.contextMenus.create({
 
 
 function isImageURL(url) {
-  // finding suffix:
-  // return(url.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
-  return(url.toLowerCase().match(/(\.|\=)(jpeg|jpg|gif|png|svg|webp)|^data:image\/(jpeg|jpg|gif|png|svg|webp);base64,.+/) != null);
+  return(url.match(/(\.|\=)(jpeg|jpg|gif|png|svg|webp)|^data:image\/(jpeg|jpg|gif|png|svg|webp);base64,.+/i) != null);
 }
 
 
