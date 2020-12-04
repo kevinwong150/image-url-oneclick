@@ -11,6 +11,15 @@ button {
     background-size: 20px 20px;
     background-image: var(--remove-white);
   }
+  &.mod-star {
+    @apply bg-center;
+    background-size: 20px 20px;
+    background-image: var(--star);
+
+    &.mod-starred {
+      background-image: var(--star-full);
+    }
+  }
   &.mod-copy {
     @apply bg-center;
     background-size: 20px 20px;

@@ -112,13 +112,14 @@ export function restore_records_page() {
         // ignore settings if invalid timestamp 
         if(new Date(parseInt(timestamp)).getTime()) {
           let record = records[timestamp];
+          let starred = record["starred"];
 
           // create list item placeholder bcoz preact render can only replace node, not append/prepend
           let recordPlaceholder = document.createElement("span");
           recordPlaceholder.id = timestamp;
           recordList.appendChild(recordPlaceholder);
 
-          render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
+          render(<Record timestamp={timestamp} record={record} starred={starred}/>, recordList, recordPlaceholder);
 
           recordPlaceholder.remove();
         }

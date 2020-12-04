@@ -161,7 +161,8 @@ function setRecords(imageURLs) {
   let timestampKey = Date.now();
   let newRecord = {
     urls: imageURLs.join("|"),
-    count: imageURLs.length
+    count: imageURLs.length,
+    starred: false
   };
   
   // put newly saved urls

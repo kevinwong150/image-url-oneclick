@@ -1,4 +1,5 @@
 import { h, render, Component } from "preact";
+import StarButton from "./buttons/StarButton";
 
 export function EmptyRecord() {
   return <span class="text-sm">There is no record yet</span>
@@ -11,12 +12,14 @@ export default class Record extends Component {
     this.state = {
       removed: false,
       copyState: "normal", // type copyState = "normal" | "success" | "fail"
-      restoreState: "normal" // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
+      restoreState: "normal", // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
+      starred: props.starred
     };
 
     this.onClickRemove = this.onClickRemove.bind(this);
     this.onClickCopy = this.onClickCopy.bind(this);
     this.onClickRestore = this.onClickRestore.bind(this);
+    this.onClickToggleStar = this.onClickToggleStar.bind(this);
   }
 
   setTempState(stateName, state, timeout) {
@@ -58,7 +61,19 @@ export default class Record extends Component {
     }.bind(this));
   }
 
-   onClickRestore =  () => {   
+  onClickToggleStar = () => {
+    chrome.storage.sync.set({[this.props.timestamp]: {...this.props.record, starred: !this.state.starred}}, function() {
+      chrome.storage.sync.get(this.props.timestamp, function(elem) {
+        console.log("elem",elem);
+      }.bind(this))
+
+      this.setState({
+        starred: !this.state.starred
+      });
+    }.bind(this));
+  }
+
+  onClickRestore =  () => {   
     chrome.tabs.query({windowType:'normal'}, function(tabs) {
       let recordsTab = tabs.find(tab => tab.active); // assume current tab is the record tab
       let openingTabsUrl = tabs.map(tab => tab.url);
@@ -152,12 +167,13 @@ export default class Record extends Component {
     } 
   }
 
-  render({ timestamp, record }, { removed, copyState, restoreState }) {
+  render({ timestamp, record }, { removed, copyState, restoreState, starred }) {
     return (
       <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex items-center mb-2 font-bold">
           <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
           <span class="ml-4">Count: {record["count"]}</span>
+          <StarButton starred={starred} onClickHandler={this.onClickToggleStar}/>
           <button class={"ml-4 h-6 w-6 font-bold mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
