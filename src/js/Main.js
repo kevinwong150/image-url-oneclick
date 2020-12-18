@@ -1,6 +1,6 @@
 import { h, render, Component, Fragment } from "preact";
 import { clear_all_records } from "./records";
-import { EmptyRecord } from "./Record";
+import { EmptyRecord } from "./Record/Record";
 
 export default class Main extends Component {
   constructor(props) {

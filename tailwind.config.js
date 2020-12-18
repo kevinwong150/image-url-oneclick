@@ -13,6 +13,7 @@ module.exports = {
     colors: {
       "light-light": "var(--light-light)",
       light: "var(--light)",
+      "light-dark": "var(--light-dark)",
       "dark-light": "var(--dark-light)",
       dark: "var(--dark)",
       "dark-dark": "var(--dark-dark)",

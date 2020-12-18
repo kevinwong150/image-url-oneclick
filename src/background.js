@@ -162,7 +162,8 @@ function setRecords(imageURLs) {
   let newRecord = {
     urls: imageURLs.join("|"),
     count: imageURLs.length,
-    starred: false
+    starred: false,
+    name: null
   };
   
   // put newly saved urls

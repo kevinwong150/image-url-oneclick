@@ -1,5 +1,19 @@
 import { h, render, Component } from "preact";
-import StarButton from "./buttons/StarButton";
+import Caption from "./Caption";
+
+const STATE_NORMAL = "normal"
+
+const STATE_COPY_SUCCESS = "success";
+const STATE_COPY_FAIL = "fail";
+
+const STATE_RESTORE_ALL = "all-restored";
+const STATE_RESTORE_PARTIAL = "partially-restored";
+const STATE_RESTORE_NOOP = "noop";
+
+export const STATE_RENAME_EDITING = "editing";
+export const STATE_RENAME_SAVING = "saving";
+export const STATE_RENAME_SUCCESS = "success";
+export const STATE_RENAME_FAIL = "fail";
 
 export function EmptyRecord() {
   return <span class="text-sm">There is no record yet</span>
@@ -10,16 +24,19 @@ export default class Record extends Component {
     super(props);
 
     this.state = {
+      record: props.record,
       removed: false,
-      copyState: "normal", // type copyState = "normal" | "success" | "fail"
-      restoreState: "normal", // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
-      starred: props.starred
+      copyState: STATE_NORMAL, // type copyState = "normal" | "success" | "fail"
+      restoreState: STATE_NORMAL, // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
+      renameState: STATE_NORMAL, // type renameState = "normal" | "editing" | "saving" | "success" | "fail"
     };
 
     this.onClickRemove = this.onClickRemove.bind(this);
     this.onClickCopy = this.onClickCopy.bind(this);
     this.onClickRestore = this.onClickRestore.bind(this);
     this.onClickToggleStar = this.onClickToggleStar.bind(this);
+    this.onClickRename = this.onClickRename.bind(this);
+    this.renameStateHandler = this.renameStateHandler.bind(this);
   }
 
   setTempState(stateName, state, timeout) {
@@ -29,7 +46,7 @@ export default class Record extends Component {
     setTimeout(() => {
       if(!this.state.removed) {
         this.setState({
-          [stateName]: "normal"
+          [stateName]: STATE_NORMAL
         });
       }
     }, timeout);
@@ -54,43 +71,64 @@ export default class Record extends Component {
   }
 
   onClickCopy = () => {
-    navigator.clipboard.writeText(this.props.record["urls"]).then(function() {
-      this.setTempState("copyState", "success", 2000);
+    navigator.clipboard.writeText(this.state.record["urls"]).then(function() {
+      this.setTempState("copyState", STATE_COPY_SUCCESS, 2000);
     }.bind(this), function() {
-      this.setTempState("copyState", "fail", 2000);
+      this.setTempState("copyState", STATE_COPY_FAIL, 2000);
     }.bind(this));
   }
 
   onClickToggleStar = () => {
-    chrome.storage.sync.set({[this.props.timestamp]: {...this.props.record, starred: !this.state.starred}}, function() {
-      chrome.storage.sync.get(this.props.timestamp, function(elem) {
-        console.log("elem",elem);
-      }.bind(this))
-
+    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, starred: !this.state.record.starred}}, function() {
       this.setState({
-        starred: !this.state.starred
+        record: {...this.state.record, starred: !this.state.record.starred}
       });
     }.bind(this));
+  }
+
+  renameStateHandler = (params) => {
+    this.setState({
+      renameState: params.renameState,
+    });
+
+    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, name: params.recordName}}, function() {
+      if (chrome.runtime.lastError) {
+        this.setTempState("renameState", STATE_RENAME_FAIL, 1000);
+      }
+      else {
+        this.setTempState("renameState", STATE_RENAME_SUCCESS, 1000);
+        
+        this.setState({
+          record: {...this.state.record, name: params.recordName}
+        });
+      }  
+    }.bind(this));
+  }
+  
+  onClickRename = () => {
+    this.setState({
+      renameState: this.state.renameState === STATE_RENAME_EDITING ? STATE_NORMAL : STATE_RENAME_EDITING
+    });
   }
 
   onClickRestore =  () => {   
     chrome.tabs.query({windowType:'normal'}, function(tabs) {
       let recordsTab = tabs.find(tab => tab.active); // assume current tab is the record tab
       let openingTabsUrl = tabs.map(tab => tab.url);
-      let recordUrls = this.props.record["urls"].split("|");
+      let recordUrls = this.state.record["urls"].split("|");
       let openRecordUrl = recordUrls.filter(url => !openingTabsUrl.includes(url));
 
       // restore record urls
       openRecordUrl.map(url => chrome.tabs.create({url:url}));
 
       if(openRecordUrl.length === recordUrls.length) {
-        this.setTempState("restoreState", "all-restored", 3000);
+        this.setTempState("restoreState", STATE_RESTORE_ALL, 3000);
       }
       else if (openRecordUrl.length > 0 && openRecordUrl.length < recordUrls.length) {
-        this.setTempState("restoreState", "partially-restored", 3000);
+        this.setTempState("restoreState", STATE_RESTORE_PARTIAL, 3000);
       }
       else if (openRecordUrl.length === 0) {
-        this.setTempState("restoreState", "noop", 3000);
+        this.setTempState("restoreState", STATE_RESTORE_NOOP, 3000);
       }
 
       // select record page after restore record
@@ -124,12 +162,12 @@ export default class Record extends Component {
 
   getCopyButtonDetails = (copyState) => {
     switch(copyState) {
-      case "fail":
+      case STATE_COPY_FAIL:
         return {
           buttonText: "Copy action failed! Please try again.",
           buttonModClass: "mod-success"
         }
-      case "success":
+      case STATE_COPY_SUCCESS:
         return {
           buttonText: "Copied!",
           buttonModClass: "mod-success"
@@ -144,17 +182,17 @@ export default class Record extends Component {
 
   getRestoreButtonDetails = (restoreState) => {
     switch(restoreState) {
-      case "noop":
+      case STATE_RESTORE_NOOP:
         return {
           buttonText: "All images are already opened, please check your tabs.",
           buttonModClass: "mod-noop"
         }
-      case "partially-restored":
+      case STATE_RESTORE_PARTIAL:
         return {
           buttonText: "Restored, some images are already opened.",
           buttonModClass: "mod-restore-some"
         }
-      case "all-restored":
+      case STATE_RESTORE_ALL:
         return {
           buttonText: "Restored!",
           buttonModClass: "mod-restore-all"
@@ -167,15 +205,15 @@ export default class Record extends Component {
     } 
   }
 
-  render({ timestamp, record }, { removed, copyState, restoreState, starred }) {
+  render({ timestamp, _record }, { record, removed, copyState, restoreState, renameState }) {
     return (
       <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
-        <div class="flex items-center mb-2 font-bold">
-          <span class="text-lg">{(new Date(parseInt(timestamp))).toLocaleString()}</span>
-          <span class="ml-4">Count: {record["count"]}</span>
-          <StarButton starred={starred} onClickHandler={this.onClickToggleStar}/>
-          <button class={"ml-4 h-6 w-6 font-bold mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
-          <button class="ml-auto h-6 w-6 font-bold mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
+        <div class="flex mb-2 font-bold">
+          <Caption timestamp={timestamp} count={record["count"]} name={record["name"]} renameState={renameState} renameStateHandler={this.renameStateHandler}/>
+          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-star " + (record.starred ? "mod-starred" : "") } title="Star Record" onclick={this.onClickToggleStar}></button>
+          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + (renameState !== STATE_NORMAL ? "pointer-events-none" : "pointer-events-auto")} title="Rename record" onclick={this.onClickRename}></button>
+          <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
+          <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
         <div class="">
           <span class="urls">{record["urls"]}</span>
