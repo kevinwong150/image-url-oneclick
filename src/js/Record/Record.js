@@ -205,13 +205,38 @@ export default class Record extends Component {
     } 
   }
 
+  getRenameButtonDetails = (renameState) => {
+    switch(renameState) {
+      case STATE_RENAME_EDITING:
+        return {
+          buttonModClass: "mod-editing pointer-events-auto"
+        }
+      case STATE_RENAME_SAVING:
+        return {
+          buttonModClass: "mod-saving pointer-events-none"
+        }
+      case STATE_RENAME_SUCCESS:
+        return {
+          buttonModClass: "pointer-events-none"
+        }
+      case STATE_RENAME_FAIL:
+        return {
+          buttonModClass: "pointer-events-none"
+        }
+      default:
+        return {
+          buttonModClass: "pointer-events-auto"
+        }
+    } 
+  }
+
   render({ timestamp, _record }, { record, removed, copyState, restoreState, renameState }) {
     return (
       <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex mb-2 font-bold">
           <Caption timestamp={timestamp} count={record["count"]} name={record["name"]} renameState={renameState} renameStateHandler={this.renameStateHandler}/>
           <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-star " + (record.starred ? "mod-starred" : "") } title="Star Record" onclick={this.onClickToggleStar}></button>
-          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + (renameState !== STATE_NORMAL ? "pointer-events-none" : "pointer-events-auto")} title="Rename record" onclick={this.onClickRename}></button>
+          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + this.getRenameButtonDetails(renameState)["buttonModClass"]} title="Rename record" onclick={this.onClickRename}></button>
           <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>

@@ -24,6 +24,14 @@ button {
     @apply bg-center;
     background-size: 20px 20px;
     background-image: var(--rename);
+
+    &.mod-editing {
+      background-image: var(--enter);
+    }
+
+    &.mod-saving {
+      background-image: var(--saving);
+    }
   }
   &.mod-copy {
     @apply bg-center;
