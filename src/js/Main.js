@@ -76,7 +76,7 @@ export default class Main extends Component {
                   <label id="label-removeRecordOnRestore?"></label>
                 </dd>
 
-                <dt>Detail mode? (You will have more options on managing the urls in record, such as removing url.)</dt>
+                <dt>Detail mode? (More actions and configurations against a record will be available in detail mode.)</dt>
                 <dd>
                   <label id="label-isDetailMode?"></label>
                 </dd>

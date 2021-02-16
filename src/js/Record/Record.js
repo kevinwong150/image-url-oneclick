@@ -1,4 +1,4 @@
-import { h, render, Component } from "preact";
+import { h, render, Component, Fragment } from "preact";
 import Caption from "./Caption";
 import Body from "./Body";
 
@@ -278,8 +278,13 @@ export default class Record extends Component {
       <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex mb-2 font-bold">
           <Caption timestamp={timestamp} count={record["count"]} name={record["name"]} renameState={renameState} renameStateHandler={this.renameStateHandler}/>
-          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-star " + (record.starred ? "mod-starred" : "") } title="Star Record" onclick={this.onClickToggleStar}></button>
-          <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + this.getRenameButtonDetails(renameState)["buttonModClass"]} title="Rename record" onclick={this.onClickRename}></button>
+          { isDetailMode ?
+              <Fragment>
+                <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-star " + (record.starred ? "mod-starred" : "") } title="Star Record" onclick={this.onClickToggleStar}></button>
+                <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + this.getRenameButtonDetails(renameState)["buttonModClass"]} title="Rename record" onclick={this.onClickRename}></button>
+              </Fragment> :
+              null
+          }    
           <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
