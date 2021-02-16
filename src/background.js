@@ -13,7 +13,8 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({
     "settings-removeTabs?": false,
     "settings-removeAllConfirmation?": true,
-    "settings-removeRecordOnRestore?": true
+    "settings-removeRecordOnRestore?": true,
+    "settings-isDetailMode?": true
   }, function() {
     console.log("Initialized settings");
   });

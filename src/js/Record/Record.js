@@ -273,7 +273,7 @@ export default class Record extends Component {
     } 
   }
 
-  render({ timestamp, _record }, { record, removed, copyState, restoreState, renameState }) {
+  render({ timestamp, _record, isDetailMode }, { record, removed, copyState, restoreState, renameState }) {
     return (
       <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex mb-2 font-bold">
@@ -283,7 +283,7 @@ export default class Record extends Component {
           <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
-        <Body urls={record["urls"]} removeStateHandler={this.removeStateHandler} isDetailMode={true}/>
+        <Body urls={record["urls"]} removeStateHandler={this.removeStateHandler} isDetailMode={isDetailMode}/>
         <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
       </li>
     );

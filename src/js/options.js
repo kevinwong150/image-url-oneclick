@@ -13,7 +13,8 @@ export function restore_settings_page() {
   chrome.storage.sync.get([
     "settings-removeTabs?", 
     "settings-removeAllConfirmation?",
-    "settings-removeRecordOnRestore?"
+    "settings-removeRecordOnRestore?",
+    "settings-isDetailMode?"
   ], function (records) {
     // terminate if no storage
     if (Object.keys(records).length === 0) 
@@ -52,6 +53,17 @@ export function restore_settings_page() {
       });
     });
     document.getElementById("label-removeRecordOnRestore?").appendChild(checkboxRemoveRecordOnRestore);
+
+    let checkboxDetailMode = document.createElement("input");
+    checkboxDetailMode.name = "isDetailMode?";
+    checkboxDetailMode.type = "checkbox";
+    checkboxDetailMode.checked = "settings-isDetailMode?" in records ? records["settings-isDetailMode?"] : true ;
+    checkboxDetailMode.addEventListener("change", (e) => {
+      chrome.storage.sync.set({["settings-isDetailMode?"]: e.target.checked}, () => {
+        console.log("Settings updated");
+      });
+    });
+    document.getElementById("label-isDetailMode?").appendChild(checkboxDetailMode);
 });
 
   console.log("option loaded");

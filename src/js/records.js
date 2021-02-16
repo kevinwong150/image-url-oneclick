@@ -4,13 +4,19 @@ import Record, { EmptyRecord } from "./Record/Record";
 import Page from "./Page";
 
 let hasConfirm = true;
+let isDetailMode = true;
 
 // get saved settings 
 chrome.storage.sync.get([
-  "settings-removeAllConfirmation?"
+  "settings-removeAllConfirmation?",
+  "settings-isDetailMode?"
 ], function (records) {
   if("settings-removeAllConfirmation?" in records) {
     hasConfirm = records["settings-removeAllConfirmation?"];
+  }
+
+  if("settings-isDetailMode?" in records) {
+    isDetailMode = records["settings-isDetailMode?"];
   }
 });
 
@@ -18,6 +24,10 @@ chrome.storage.sync.get([
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if(areaName === "sync" && "settings-removeAllConfirmation?" in changes) {
     hasConfirm = changes["settings-removeAllConfirmation?"]["newValue"];
+  }
+
+  if(areaName === "sync" && "settings-isDetailMode?" in changes) {
+    isDetailMode = changes["settings-isDetailMode?"]["newValue"];
   }
 });
 
@@ -118,7 +128,7 @@ export function restore_records_page() {
           recordPlaceholder.id = timestamp;
           recordList.appendChild(recordPlaceholder);
 
-          render(<Record timestamp={timestamp} record={record}/>, recordList, recordPlaceholder);
+          render(<Record timestamp={timestamp} record={record} isDetailMode={isDetailMode}/>, recordList, recordPlaceholder);
 
           recordPlaceholder.remove();
         }
