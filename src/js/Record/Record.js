@@ -1,5 +1,6 @@
 import { h, render, Component } from "preact";
 import Caption from "./Caption";
+import Body from "./Body";
 
 const STATE_NORMAL = "normal"
 
@@ -15,6 +16,10 @@ export const STATE_RENAME_SAVING = "saving";
 export const STATE_RENAME_SUCCESS = "success";
 export const STATE_RENAME_FAIL = "fail";
 
+export const STATE_REMOVE_REMOVING = "removing";
+export const STATE_REMOVE_SUCCESS = "success";
+export const STATE_REMOVE_FAIL = "fail";
+
 export function EmptyRecord() {
   return <span class="text-sm">There is no record yet</span>
 }
@@ -29,6 +34,7 @@ export default class Record extends Component {
       copyState: STATE_NORMAL, // type copyState = "normal" | "success" | "fail"
       restoreState: STATE_NORMAL, // type restoreState = "normal" | "all-restored" | "partially-restored" | "noop"
       renameState: STATE_NORMAL, // type renameState = "normal" | "editing" | "saving" | "success" | "fail"
+      removeState: STATE_NORMAL // type removeState = "normal" | "removing" | "success" | "fail"
     };
 
     this.onClickRemove = this.onClickRemove.bind(this);
@@ -36,6 +42,7 @@ export default class Record extends Component {
     this.onClickRestore = this.onClickRestore.bind(this);
     this.onClickToggleStar = this.onClickToggleStar.bind(this);
     this.onClickRename = this.onClickRename.bind(this);
+    this.renameStateHandler = this.renameStateHandler.bind(this);
     this.renameStateHandler = this.renameStateHandler.bind(this);
   }
 
@@ -52,9 +59,10 @@ export default class Record extends Component {
     }, timeout);
   }
 
-  onClickRemove = () => {
-    chrome.storage.sync.remove(this.props.timestamp, () => {
-      let thisRecord = document.getElementById(this.props.timestamp);
+  // remove record by timestamp(key)
+  removeRecord(timestamp) {
+    chrome.storage.sync.remove(timestamp, () => {
+      let thisRecord = document.getElementById(timestamp);
       if (thisRecord) {
         thisRecord.remove();
         this.setState({
@@ -68,6 +76,11 @@ export default class Record extends Component {
         });
       }
     });
+  }
+
+  // on event methods and handlers
+  onClickRemove = () => {
+    this.removeRecord(this.props.timestamp);
   }
 
   onClickCopy = () => {
@@ -101,6 +114,36 @@ export default class Record extends Component {
         this.setState({
           record: {...this.state.record, name: params.recordName}
         });
+      }  
+    }.bind(this));
+  }
+
+  removeStateHandler = (params) => {
+    let recordUrls = this.state.record["urls"].split("|");
+
+    // remove url from list
+    recordUrls.splice(params.removeIndex, 1);
+
+    this.setState({
+      removeState: params.removeState
+    });
+
+    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, urls: recordUrls.join("|"), count: recordUrls.length}}, function() {
+      if (chrome.runtime.lastError) {
+        this.setTempState("removeState", STATE_REMOVE_FAIL, 1000);
+      }
+      else {
+        this.setTempState("removeState", STATE_REMOVE_SUCCESS, 1000);
+
+        // remove whole record if the last url is removed
+        if(recordUrls.length == 0) {
+          this.removeRecord(this.props.timestamp);
+        }
+        else {
+          this.setState({
+            record: {...this.state.record, urls: recordUrls.join("|"), count: recordUrls.length}
+          });
+        }
       }  
     }.bind(this));
   }
@@ -240,9 +283,7 @@ export default class Record extends Component {
           <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
-        <div class="">
-          <span class="urls">{record["urls"]}</span>
-        </div>
+        <Body urls={record["urls"]} removeStateHandler={this.removeStateHandler} isDetailMode={true}/>
         <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
       </li>
     );
