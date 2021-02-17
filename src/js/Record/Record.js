@@ -275,7 +275,7 @@ export default class Record extends Component {
 
   render({ timestamp, _record, isDetailMode }, { record, removed, copyState, restoreState, renameState }) {
     return (
-      <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (removed ? "hidden" : "block")} id={timestamp}>
+      <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (record.starred ? "order-1 " : "order-10 ") + (removed ? "hidden" : "block")} id={timestamp}>
         <div class="flex mb-2 font-bold">
           <Caption timestamp={timestamp} count={record["count"]} name={record["name"]} renameState={renameState} renameStateHandler={this.renameStateHandler}/>
           { isDetailMode ?

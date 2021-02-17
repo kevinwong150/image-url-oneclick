@@ -115,7 +115,7 @@ export function restore_records_page() {
       let recordsContent = document.getElementById('records-body');
       let recordList = document.createElement("ul"); 
       recordsContent.innerHTML = "";
-      recordList.classList = [ "record-list" ];
+      recordList.classList = "record-list flex flex-col";
       recordList.innerHTML = "";
 
       Object.keys(records).forEach((timestamp, index) => {
