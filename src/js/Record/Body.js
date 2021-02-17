@@ -35,7 +35,7 @@ export default class Body extends Component {
 function UrlItem({url, removeStateHandler}) {
   return (
     <li class="flex">
-      <button onClick={removeStateHandler} class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-delete"></button>
+      <button onClick={removeStateHandler} class="h-6 w-6 font-bold flex-shrink-0 mod-delete"></button>
       <div>{url}</div>
     </li>
   )
