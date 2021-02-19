@@ -1,6 +1,6 @@
 {
   "name": "Image URL Oneclick",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "One click to save your opened image tabs into browsers",
   "manifest_version": 2,
   "browser_action": {
