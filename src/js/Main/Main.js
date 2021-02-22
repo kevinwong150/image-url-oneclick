@@ -1,26 +1,17 @@
-import { h, render, Component, Fragment } from "preact";
-import { clear_all_records } from "./records";
-import { EmptyRecord } from "./Record/Record";
+import { h, render, Component, Fragment, createContext } from "preact";
+import { clear_all_records } from "../records";
+import { PAGE_RECORD, PAGE_SETTING } from "../Page";
+import { EmptyRecord } from "../Record/Record";
+import MainHeader from "./MainHeader";
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
   }
 
-  getMainHeader = (page) => {
-    switch (page) {
-      case "records":
-        return "RECORDS";
-      case "settings":
-        return "SETTINGS";
-      default:
-        return "PAGE";
-    }
-  }
-
   getMainButtons = (page) => {
     switch (page) {
-      case "records":
+      case PAGE_RECORD:
         return (
           <Fragment>
             <button onclick={clear_all_records} class="mod-clear-all rounded-md pl-4 h-8 w-32 flex justify-center items-center text-light-light bg-dark-light" id="clear-all">Clear All</button>
@@ -31,7 +22,7 @@ export default class Main extends Component {
             </button>
           </Fragment>
         );
-      case "settings":
+      case PAGE_SETTING:
         return (
           <Fragment>
             <button class="mod-back rounded-md h-8 w-32 flex items-center text-light-light bg-dark-light">
@@ -48,7 +39,7 @@ export default class Main extends Component {
 
   getMainContent = (page) => {
     switch (page) {
-      case "records":
+      case PAGE_RECORD:
         return (
           <Fragment>
             <div id="records-body" class="max-w-screen-md w-full">
@@ -56,7 +47,7 @@ export default class Main extends Component {
             </div>
           </Fragment>
         );
-      case "settings":
+      case PAGE_SETTING:
         return (
           <Fragment>
             <div id="options-body" class="max-w-screen-md w-full">
@@ -92,8 +83,8 @@ export default class Main extends Component {
   render(props, _) {
     return (
       <main class="bg-light text-dark-dark flex flex-col flex-1 items-center px-4">
-        <div class="max-w-screen-md flex justify-between w-full py-3">
-          <h1 class="text-2xl pr-4">{this.getMainHeader(props.page)}</h1>
+        <div class="max-w-screen-md flex flex-wrap justify-between w-full py-3">
+          <MainHeader page={props.page}/>
           <div class="flex space-x-2 text-sm">
             {this.getMainButtons(props.page)}
           </div>

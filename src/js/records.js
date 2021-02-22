@@ -1,7 +1,8 @@
 import { h, render, Component } from "preact";
 import "crx-hotreload";
 import Record, { EmptyRecord } from "./Record/Record";
-import Page from "./Page";
+import Page, { PAGE_RECORD } from "./Page";
+import { updateMainHeader, ACTION_COUNT_INIT } from "./Main/MainHeader";
 
 let hasConfirm = true;
 let isDetailMode = true;
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const placeholder = document.getElementById('placeholder-records');
   if(placeholder){
-    render(<Page page="records"/>, placeholder.parentElement);
+    render(<Page page={PAGE_RECORD}/>, placeholder.parentElement);
   }
 });
 
@@ -102,6 +103,8 @@ export function clear_all_records() {
       document.getElementById('records-body').innerHTML = "";
       render(<EmptyRecord />, document.getElementById('records-body'));
     }
+
+    updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, {recordCount: 0, urlCount: 0});
   });
 }
 
@@ -118,6 +121,11 @@ export function restore_records_page() {
       recordList.classList = "record-list flex flex-col";
       recordList.innerHTML = "";
 
+      let result = {
+        recordCount: 0,
+        urlCount: 0
+      }
+
       Object.keys(records).forEach((timestamp, index) => {
         // ignore settings if invalid timestamp 
         if(new Date(parseInt(timestamp)).getTime()) {
@@ -131,10 +139,15 @@ export function restore_records_page() {
           render(<Record timestamp={timestamp} record={record} isDetailMode={isDetailMode}/>, recordList, recordPlaceholder);
 
           recordPlaceholder.remove();
+
+          result.urlCount += record["count"];
+          result.recordCount += 1;
         }
       });
   
       recordsContent.appendChild(recordList);
+
+      updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, result);
     }
   });
 };

@@ -1,6 +1,8 @@
 import { h, render, Component, Fragment } from "preact";
 import Caption from "./Caption";
 import Body from "./Body";
+import { updateMainHeader, ACTION_COUNT_UPDATE } from "../Main/MainHeader";
+import { PAGE_RECORD } from "../Page";
 
 const STATE_NORMAL = "normal"
 
@@ -64,6 +66,8 @@ export default class Record extends Component {
     chrome.storage.sync.remove(timestamp, () => {
       let thisRecord = document.getElementById(timestamp);
       if (thisRecord) {
+        const removedCount = this.state.record["count"];
+
         thisRecord.remove();
         this.setState({
           removed: true
@@ -74,6 +78,8 @@ export default class Record extends Component {
             render(<EmptyRecord />, document.getElementById('records-body'));
           }
         });
+
+        updateMainHeader(PAGE_RECORD, ACTION_COUNT_UPDATE, {recordCount: -1, urlCount: -1 * removedCount})
       }
     });
   }
@@ -143,6 +149,7 @@ export default class Record extends Component {
           this.setState({
             record: {...this.state.record, urls: recordUrls.join("|"), count: recordUrls.length}
           });
+          updateMainHeader(PAGE_RECORD, ACTION_COUNT_UPDATE, {recordCount: 0, urlCount: -1})
         }
       }  
     }.bind(this));
@@ -181,23 +188,7 @@ export default class Record extends Component {
         "settings-removeRecordOnRestore?"
       ], function (records) {
         if("settings-removeRecordOnRestore?" in records && records["settings-removeRecordOnRestore?"]) {
-          let timestamp = this.props.timestamp;
-          let thisRecord = document.getElementById(timestamp);
-          if (thisRecord) {
-            chrome.storage.sync.remove(timestamp, () => {
-              thisRecord.remove();
-              this.setState({
-                removed: true
-              });
-
-              chrome.storage.sync.get(null, function (records) {
-                if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
-                  document.getElementById('records-body').innerHTML = "";
-                  render(<EmptyRecord />, document.getElementById('records-body'));
-                }
-              });
-            });
-          }
+          this.removeRecord(this.props.timestamp);
         } 
       }.bind(this));
     }.bind(this)); 

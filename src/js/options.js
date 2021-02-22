@@ -1,11 +1,11 @@
 import { h, render, Component } from "preact";
 import "crx-hotreload";
-import Page from "./Page";
+import Page, { PAGE_RECORD, PAGE_SETTING } from "./Page";
 
 document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById('placeholder-settings');
   if(placeholder){
-    render(<Page page="settings"/>, placeholder.parentElement);
+    render(<Page page={PAGE_SETTING}/>, placeholder.parentElement);
   }
 });
 
