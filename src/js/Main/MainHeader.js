@@ -82,7 +82,7 @@ export default class MainHeader extends Component {
     }
   }
 
-  render({ page, action, data = {recordCount: 0, urlCount: 0}}, _) {
+  render({ page, action, data }, _) {
     const updateData = 
       action === ACTION_COUNT_INIT ? 
       data :

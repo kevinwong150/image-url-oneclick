@@ -2,7 +2,7 @@ import { h, render, Component, Fragment, createContext } from "preact";
 import { clear_all_records } from "../records";
 import { PAGE_RECORD, PAGE_SETTING } from "../Page";
 import { EmptyRecord } from "../Record/Record";
-import MainHeader from "./MainHeader";
+import MainHeader, { ACTION_COUNT_INIT } from "./MainHeader";
 
 export default class Main extends Component {
   constructor(props) {
@@ -84,7 +84,7 @@ export default class Main extends Component {
     return (
       <main class="bg-light text-dark-dark flex flex-col flex-1 items-center px-4">
         <div class="max-w-screen-md flex flex-wrap justify-between w-full py-3">
-          <MainHeader page={props.page}/>
+          <MainHeader page={props.page} action={ACTION_COUNT_INIT} data={{recordCount: 0, urlCount: 0}}/>
           <div class="flex space-x-2 text-sm">
             {this.getMainButtons(props.page)}
           </div>
