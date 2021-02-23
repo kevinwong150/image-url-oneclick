@@ -18,7 +18,7 @@ export default class Caption extends Component {
   onSubmitHandler = (e) => {
     this.props.renameStateHandler({
       renameState: STATE_RENAME_SAVING,
-      recordName: e.target.value
+      recordName: e.target.value.trim()
     });
   }
 
