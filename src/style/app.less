@@ -95,6 +95,17 @@ button {
   .mod-label(magneta);
   .mod-label(honey);
   .mod-label(add);
+
+  &-list {
+    @apply overflow-hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-in-out;
+
+    &.mod-selecting {
+      max-height: 120px;
+      transition-duration: 0.4s;
+    }
+  }
 }
 
 .settings-list {

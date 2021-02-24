@@ -36,7 +36,7 @@ export default class Labels extends Component {
           ))
         }
         <div class="relative h-full">
-          <ul class={`flex-col absolute right-0 ${isSelecting ? "flex" : "hidden"}`} style="bottom: 100%;">
+          <ul class={`label-list flex-col absolute right-0 ${isSelecting ? "mod-selecting" : ""}`} style="bottom: 100%;">
             {
               Object.keys(isLabelSelected).filter(color => !isLabelSelected[color]).map(color => (
                 <Label color={color} onClickHandler={this.onClickHandler}/>
