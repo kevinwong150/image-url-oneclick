@@ -10,7 +10,7 @@ export default class Body extends Component {
   render({ urls, removeStateHandler, isDetailMode }, _) {
     if(isDetailMode) {
       return (
-        <ul class="space-y-2">
+        <ul class="space-y-2 my-2">
           { 
             urls.split("|").map((url, index) => 
               <Fragment key={stringToHash(url)}>
@@ -23,7 +23,7 @@ export default class Body extends Component {
     }
     else {
       return (
-        <div class="">
+        <div class="my-2">
           <span class="urls">{urls}</span>
         </div>
       )

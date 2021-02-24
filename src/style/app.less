@@ -79,6 +79,24 @@ button {
   }
 }
 
+.label {
+  @apply h-full bg-contain bg-no-repeat bg-center cursor-pointer flex-shrink-0 h-6;
+  width: 60px;
+
+  .mod-label(@color) {
+    &.mod-@{color} {
+      background-image: ~"var(--label-@{color})";
+    }
+  }
+
+  .mod-label(violet);
+  .mod-label(teal);
+  .mod-label(lake);
+  .mod-label(magneta);
+  .mod-label(honey);
+  .mod-label(add);
+}
+
 .settings-list {
   dt {
     @apply text-sm;

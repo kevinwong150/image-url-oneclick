@@ -1,6 +1,7 @@
 import { h, render, Component, Fragment } from "preact";
 import Caption from "./Caption";
 import Body from "./Body";
+import Labels from "./Labels";
 import { updateMainHeader, ACTION_COUNT_UPDATE } from "../Main/MainHeader";
 import { PAGE_RECORD } from "../Page";
 
@@ -43,6 +44,7 @@ export default class Record extends Component {
     this.onClickCopy = this.onClickCopy.bind(this);
     this.onClickRestore = this.onClickRestore.bind(this);
     this.onClickToggleStar = this.onClickToggleStar.bind(this);
+    this.onClickToggleLabel = this.onClickToggleLabel.bind(this);
     this.onClickRename = this.onClickRename.bind(this);
     this.renameStateHandler = this.renameStateHandler.bind(this);
     this.renameStateHandler = this.renameStateHandler.bind(this);
@@ -101,6 +103,14 @@ export default class Record extends Component {
     chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, starred: !this.state.record.starred}}, function() {
       this.setState({
         record: {...this.state.record, starred: !this.state.record.starred}
+      });
+    }.bind(this));
+  }
+
+  onClickToggleLabel = (color) => {
+    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, isLabelSelected: {...this.state.record["isLabelSelected"], [color]: !this.state.record["isLabelSelected"][color]}}}, function() {
+      this.setState({
+        record: {...this.state.record, isLabelSelected: {...this.state.record["isLabelSelected"], [color]: !this.state.record["isLabelSelected"][color]}}
       });
     }.bind(this));
   }
@@ -266,21 +276,25 @@ export default class Record extends Component {
 
   render({ timestamp, _record, isDetailMode }, { record, removed, copyState, restoreState, renameState }) {
     return (
-      <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md overflow-auto " + (record.starred ? "order-1 " : "order-10 ") + (removed ? "hidden" : "block")} id={timestamp}>
-        <div class="flex mb-2 font-bold">
+      <li class={"shadow-regular bg-light-light break-all p-4 mb-4 rounded-md " + (record.starred ? "order-1 " : "order-10 ") + (removed ? "hidden" : "block")} id={timestamp}>
+        <div class="flex font-bold">
           <Caption timestamp={timestamp} count={record["count"]} name={record["name"]} renameState={renameState} renameStateHandler={this.renameStateHandler}/>
-          { isDetailMode ?
+          { isDetailMode &&
               <Fragment>
                 <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-star " + (record.starred ? "mod-starred" : "") } title="Star Record" onclick={this.onClickToggleStar}></button>
                 <button class={"ml-4 h-6 w-6 font-bold flex-shrink-0 mod-rename " + this.getRenameButtonDetails(renameState)["buttonModClass"]} title="Rename record" onclick={this.onClickRename}></button>
-              </Fragment> :
-              null
+              </Fragment>
           }    
           <button class={"ml-4 mr-4 h-6 w-6 font-bold flex-shrink-0 mod-copy " + this.getCopyButtonDetails(copyState)["buttonModClass"]} title="Copy URLs" onclick={this.onClickCopy}>{this.getCopyButtonDetails(copyState)["buttonText"]}</button>
           <button class="ml-auto h-6 w-6 font-bold flex-shrink-0 mod-remove " title="Delete record" onclick={this.onClickRemove}></button>
         </div>
         <Body urls={record["urls"]} removeStateHandler={this.removeStateHandler} isDetailMode={isDetailMode}/>
-        <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
+        <div class="flex">
+          { isDetailMode &&
+              <Labels isLabelSelected={this.state.record["isLabelSelected"]} toggleLabelHandler={this.onClickToggleLabel}/>
+          }
+          <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
+        </div>
       </li>
     );
   }

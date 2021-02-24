@@ -164,7 +164,14 @@ function setRecords(imageURLs) {
     urls: imageURLs.join("|"),
     count: imageURLs.length,
     starred: false,
-    name: null
+    name: null,
+    isLabelSelected: {
+      "violet": false,
+      "teal": false,
+      "lake": false,
+      "honey": false,
+      "magneta": false
+    }
   };
   
   // put newly saved urls
