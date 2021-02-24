@@ -293,7 +293,7 @@ export default class Record extends Component {
           { isDetailMode &&
               <Labels isLabelSelected={this.state.record["isLabelSelected"]} toggleLabelHandler={this.onClickToggleLabel}/>
           }
-          <button class={"ml-auto h-6 w-6 font-bold flex items-center mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
+          <button class={"ml-auto h-6 w-6 font-bold flex items-center flex-shrink-0 mod-restore " + this.getRestoreButtonDetails(restoreState)["buttonModClass"]} title="Restore record" onclick={this.onClickRestore}>{this.getRestoreButtonDetails(restoreState)["buttonText"]}</button>
         </div>
       </li>
     );

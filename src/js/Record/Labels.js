@@ -29,7 +29,7 @@ export default class Labels extends Component {
 
   render({ isLabelSelected }, { isSelecting }) {
     return (
-      <div class="flex items-center space-x-1">   
+      <div class="flex flex-wrap">   
         {
           Object.keys(isLabelSelected).filter(color => isLabelSelected[color]).map(color => (
             <Label color={color} onClickHandler={this.onClickHandler}/>
