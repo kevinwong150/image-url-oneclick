@@ -11,6 +11,34 @@ button {
     background-size: 20px 20px;
     background-image: var(--remove-white);
   }
+  &.mod-filter {
+    background-position: left 20px center;
+    background-size: 20px 20px;
+    background-image: var(--filter);
+
+    &.mod-filtering {
+      &::after {
+        content: "";
+        @apply absolute cursor-auto z-0;
+        left: 50%;
+        bottom: -100%;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        border-bottom: 30px solid var(--light-light);
+        transform: translateX(-50%);
+      }
+    }
+  }
+  &.mod-apply {
+    background-position: left 20px center;
+    background-size: 20px 20px;
+    background-image: var(--enter-mutate);
+  }
+  &.mod-reset {
+    background-position: left 20px center;
+    background-size: 20px 20px;
+    background-image: var(--reset);
+  }
   &.mod-star {
     @apply bg-center;
     background-size: 20px 20px;
@@ -86,6 +114,13 @@ button {
   .mod-label(@color) {
     &.mod-@{color} {
       background-image: ~"var(--label-@{color})";
+
+      &.mod-selected {
+        background-image: ~"var(--tick), var(--label-@{color})";
+        background-position: center center, center center;
+        background-size: 12px 12px, contain;
+        background-repeat: no-repeat, no-repeat;
+      }
     }
   }
 

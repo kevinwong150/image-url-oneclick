@@ -94,6 +94,7 @@ export function clear_all_records() {
         });
         document.getElementById('records-body').innerHTML = "";
         render(<EmptyRecord />, document.getElementById('records-body'));
+        updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, {recordCount: 0, urlCount: 0});
       }
     }
     else {
@@ -102,13 +103,12 @@ export function clear_all_records() {
       });
       document.getElementById('records-body').innerHTML = "";
       render(<EmptyRecord />, document.getElementById('records-body'));
+      updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, {recordCount: 0, urlCount: 0});
     }
-
-    updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, {recordCount: 0, urlCount: 0});
   });
 }
 
-export function restore_records_page() {
+export function restore_records_page(filterParams = false) {
   chrome.storage.sync.get(null, function(records) {
     // terminate if no storage
     if (Object.keys(records).filter(record => !(/^settings-.+/.test(record))).length === 0) {
@@ -116,38 +116,42 @@ export function restore_records_page() {
     }
     else {
       let recordsContent = document.getElementById('records-body');
-      let recordList = document.createElement("ul"); 
-      recordsContent.innerHTML = "";
-      recordList.classList = "record-list flex flex-col";
-      recordList.innerHTML = "";
-
       let result = {
         recordCount: 0,
         urlCount: 0
       }
 
-      Object.keys(records).forEach((timestamp, index) => {
-        // ignore settings if invalid timestamp 
-        if(new Date(parseInt(timestamp)).getTime()) {
-          let record = records[timestamp];
+      const recordListItems = 
+        Object.keys(records)
+          // ignore settings if invalid timestamp 
+          // note: cannot do filter function here coz it will mess up with css order
+          .filter(timestamp => new Date(parseInt(timestamp)).getTime()) 
+          .map(timestamp => {
+            let record = records[timestamp];
+            const isFiltered = filterParams instanceof Object ? checkIsFiltered(record, filterParams) : false;
+            result.urlCount += record["count"];
+            result.recordCount += 1;
 
-          // create list item placeholder bcoz preact render can only replace node, not append/prepend
-          let recordPlaceholder = document.createElement("span");
-          recordPlaceholder.id = timestamp;
-          recordList.appendChild(recordPlaceholder);
+            return <Record timestamp={timestamp} record={record} isDetailMode={isDetailMode} isFiltered={isFiltered}/>
+          });
 
-          render(<Record timestamp={timestamp} record={record} isDetailMode={isDetailMode}/>, recordList, recordPlaceholder);
-
-          recordPlaceholder.remove();
-
-          result.urlCount += record["count"];
-          result.recordCount += 1;
-        }
-      });
-  
-      recordsContent.appendChild(recordList);
+      render(
+        <ul class="record-list flex flex-col">{recordListItems}</ul>,
+        recordsContent
+      );
 
       updateMainHeader(PAGE_RECORD, ACTION_COUNT_INIT, result);
     }
   });
 };
+
+function checkIsFiltered(record, filterParams) {
+  // check starred match
+  const matchFilterStarred = record["starred"] === filterParams["filterStarred"];
+
+  // check all labels match
+  const matchFilterLabel =  Object.keys(record["isLabelSelected"]).every(label => record["isLabelSelected"][label] === filterParams["filterLabel"][label]);
+
+  // flag as isFiltered if any of the params not matching
+  return !matchFilterStarred || !matchFilterLabel;
+}
