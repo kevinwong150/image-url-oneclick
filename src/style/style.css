@@ -6,4 +6,6 @@
 @import "./variables/colors.less";
 @import "./variables/fonts.less";
 
+@import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 @import "./app.less";
