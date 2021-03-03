@@ -3,7 +3,24 @@ import { useState } from 'preact/hooks';
 import { Label } from "../Record/Labels";
 import { restore_records_page } from "../records";
 import flatpickr from "flatpickr";
+import rangePlugin from "flatpickr/dist/plugins/rangePlugin";
 require("flatpickr/dist/themes/dark.css");
+
+const INIT_FILTER_PARAMS = {
+  filterLabel: {
+    "violet": false,
+    "teal": false,
+    "lake": false,
+    "honey": false,
+    "magneta": false
+  },
+  filterDate: {
+    timestampStart: false,
+    timestampEnd: false
+  },
+  filterStarred: false
+}
+
 export default class MainFilterPanel extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +33,10 @@ export default class MainFilterPanel extends Component {
           "lake": false,
           "honey": false,
           "magneta": false
+        },
+        filterDate: {
+          timestampStart: false,
+          timestampEnd: false
         },
         filterStarred: false
       }
@@ -30,14 +51,29 @@ export default class MainFilterPanel extends Component {
   componentDidMount() {
     console.log(document.getElementById("flatpickr-placeholder"));
 
-    flatpickr(document.getElementById("flatpickr-placeholder"), {
-      // disableMobile: true,
-      // enableTime: true,
-      // time_24hr: true,
-      // minuteIncrement: 15,
-      // dateFormat: "Y-m-d H:i"
+
+    const datepicker = flatpickr(document.getElementById("flatpickr-placeholder"), {
+      mode: "range",
+      maxDate: "today",
+      dateFormat: "Y-m-d",
+      disableMobile: "true",
+      "plugins": [new rangePlugin({ input: "#flatpickr-placeholder-second"})],
+      onChange: (selectedDates, dateStr, instance) => {
+        if(selectedDates.length == 2) {
+          this.setState({
+            filterParams: {
+              ...this.state.filterParams,
+              filterDate: {
+                timestampStart: selectedDates[0].getTime(),
+                timestampEnd: selectedDates[1].getTime() + 86399000
+              }
+            }
+          });
+        }
+      }
     });
-    console.log("FLATPICKR");
+
+    this.setState({datepicker: datepicker});
   }
 
   onClickApplyFilter = (e) => {
@@ -46,6 +82,14 @@ export default class MainFilterPanel extends Component {
 
   onClickResetFilter = (e) => {
     restore_records_page();
+
+    this.setState(function(prevState){
+      prevState.datepicker.clear();
+
+      return {
+        filterParams: INIT_FILTER_PARAMS
+      }
+    });
   }
 
   onToggleIsLabelFilter = (e, color) => {
@@ -70,31 +114,34 @@ export default class MainFilterPanel extends Component {
   }
 
   render(props, { filterParams }) {
-    return (
+    console.log("filterParams.filterStarred", filterParams.filterStarred);
 
-      <div class="bg-light-light break-all p-4 mb-4 rounded-md flex justify-between max-w-screen-md w-full z-10 flex-wrap">
-        <div class="flex flex-wrap">
-          <div class="mr-8">
+    return (
+      <div class="bg-light-light break-all p-4 mb-4 rounded-md flex justify-between max-w-screen-md w-full z-10">
+        <div class="filter-list">
+          <div class="filter-list-item mod-label">
             <h3 class="text-lg">Label Color</h3>
             <ul class="flex flex-wrap">
               {
                 Object.keys(filterParams.filterLabel).map(color => (
                   <li>
-                    <Label color={color} hasTick={true} onClickHandler={this.onToggleIsLabelFilter}/>
+                    <Label color={color} isSelected={filterParams.filterLabel[color]} onClickHandler={this.onToggleIsLabelFilter}/>
                   </li>
                 ))
               }
             </ul>
           </div>
-          <div class="mr-8">
+          <div class="filter-list-item mod-date">
             <h3 class="text-lg">Date</h3>
-            <span class="shadow-regular cursor-pointer rounded-lm">
-              <input id="flatpickr-placeholder"/>
+            <span>
+              <input id="flatpickr-placeholder" class="mod-calendar" placeholder="(Start date)"/>
+              <span class="mx-1 text-light-dark whitespace-no-wrap">To</span>
+              <input id="flatpickr-placeholder-second" class="mod-calendar" placeholder="(End date)"/>
             </span>
           </div>
-          <div class="mr-8">
+          <div class="filter-list-item mod-star">
             <h3 class="text-lg">Starred</h3>
-            <StarButton onClickHandler={this.onToggleIsStarredFilter}/>
+            <StarButton isSelected={filterParams.filterStarred} onClickHandler={this.onToggleIsStarredFilter}/>
           </div>
         </div>
         <div class="flex flex-col flex-shrink-0 text-sm space-y-2">
@@ -108,7 +155,5 @@ export default class MainFilterPanel extends Component {
 
 
 function StarButton(props) {
-  const [isSelected, toggleIsSelected] = useState(false);
-
-  return <button class={`h-6 w-6 font-bold flex-shrink-0 mod-star ${isSelected ? "mod-starred" : ""}`} onclick={(e) => {props.onClickHandler(e); toggleIsSelected(!isSelected);}}></button>
+  return <button class={`h-6 w-6 font-bold flex-shrink-0 mod-star ${props.isSelected ? "mod-starred" : ""}`} onclick={props.onClickHandler}></button>
 }

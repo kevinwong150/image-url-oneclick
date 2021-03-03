@@ -143,6 +143,28 @@ button {
   }
 }
 
+.filter-list {
+  @apply flex flex-wrap;
+
+  &-item {
+    @apply mr-6;
+    
+    &.mod-label {
+      max-width: 200px;
+    }
+
+    &.mod-date {
+      input.mod-calendar {
+        @apply border border-light-dark rounded p-2 pl-8 bg-no-repeat text-dark-light cursor-pointer my-1;
+        background-image: var(--calendar);
+        background-position: left 0.5rem center;
+        background-size: 20px 20px;
+        width: 120px;
+      }
+    }
+  }
+}
+
 .settings-list {
   dt {
     @apply text-sm;

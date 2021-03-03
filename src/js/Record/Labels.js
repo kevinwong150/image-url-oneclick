@@ -33,14 +33,14 @@ export default class Labels extends Component {
       <div class="flex flex-wrap">   
         {
           Object.keys(isLabelSelected).filter(color => isLabelSelected[color]).map(color => (
-            <Label color={color} hasTick={false} onClickHandler={this.onClickHandler}/>
+            <Label color={color} isSelected={false} onClickHandler={this.onClickHandler}/>
           ))
         }
         <div class="relative h-full">
           <ul class={`label-list flex-col absolute right-0 ${isSelecting ? "mod-selecting" : ""}`} style="bottom: 100%;">
             {
               Object.keys(isLabelSelected).filter(color => !isLabelSelected[color]).map(color => (
-                <Label color={color} hasTick={false} onClickHandler={this.onClickHandler}/>
+                <Label color={color} isSelected={false} onClickHandler={this.onClickHandler}/>
               ))
             }
           </ul>
@@ -57,7 +57,5 @@ export default class Labels extends Component {
 
 
 export function Label(props) {
-  const [isSelected, toggleIsSelected] = useState(false);
-
-  return <div class={`label mod-${props.color} ${(props.hasTick && isSelected) ? "mod-selected" : ""}`} onclick={(e) => {props.onClickHandler(e, props.color); toggleIsSelected(!isSelected);}}></div>
+  return <div class={`label mod-${props.color} ${props.isSelected ? "mod-selected" : ""}`} onclick={e => props.onClickHandler(e, props.color)}></div>
 }

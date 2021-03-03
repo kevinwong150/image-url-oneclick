@@ -128,9 +128,12 @@ export function restore_records_page(filterParams = false) {
           .filter(timestamp => new Date(parseInt(timestamp)).getTime()) 
           .map(timestamp => {
             let record = records[timestamp];
-            const isFiltered = filterParams instanceof Object ? checkIsFiltered(record, filterParams) : false;
-            result.urlCount += record["count"];
-            result.recordCount += 1;
+            const isFiltered = filterParams instanceof Object ? checkIsFiltered(record, timestamp, filterParams) : false;
+            
+            if(!isFiltered) {
+              result.urlCount += record["count"];
+              result.recordCount += 1;
+            }
 
             return <Record timestamp={timestamp} record={record} isDetailMode={isDetailMode} isFiltered={isFiltered}/>
           });
@@ -145,13 +148,19 @@ export function restore_records_page(filterParams = false) {
   });
 };
 
-function checkIsFiltered(record, filterParams) {
+function checkIsFiltered(record, timestamp, filterParams) {
   // check starred match
   const matchFilterStarred = record["starred"] === filterParams["filterStarred"];
 
   // check all labels match
   const matchFilterLabel =  Object.keys(record["isLabelSelected"]).every(label => record["isLabelSelected"][label] === filterParams["filterLabel"][label]);
+ 
+  // check timestamp within selected period
+  const hasFilterDate = Object.values(filterParams["filterDate"]).every(value => !!value);
+  const matchFilterDate = Object.values(filterParams["filterDate"]).every(value => value) && filterParams["filterDate"]["timestampStart"] < timestamp && filterParams["filterDate"]["timestampEnd"] > timestamp;
 
   // flag as isFiltered if any of the params not matching
-  return !matchFilterStarred || !matchFilterLabel;
+  return hasFilterDate ? 
+    (!matchFilterStarred || !matchFilterLabel || !matchFilterDate) :
+    (!matchFilterStarred || !matchFilterLabel);
 }
