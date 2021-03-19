@@ -135,7 +135,7 @@ export function restore_records_page(filterParams = false) {
               result.recordCount += 1;
             }
 
-            return <Record timestamp={timestamp} record={record} isDetailMode={isDetailMode} isFiltered={isFiltered}/>
+            return <Record timestamp={timestamp} record={record} isDetailMode={isDetailMode} isFiltered={isFiltered} key={timestamp}/>
           });
 
       render(
