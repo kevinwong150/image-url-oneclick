@@ -10,7 +10,7 @@ let isRemoveTabs = false;
 
 // initialized settings on installed
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     "settings-removeTabs?": false,
     "settings-removeAllConfirmation?": true,
     "settings-removeRecordOnRestore?": true,
@@ -21,7 +21,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // get saved settings 
-chrome.storage.sync.get([
+chrome.storage.local.get([
   "settings-removeTabs?"
 ], function (records) {
   if("settings-removeTabs?" in records) {
@@ -175,7 +175,7 @@ function setRecords(imageURLs) {
   };
   
   // put newly saved urls
-  chrome.storage.sync.set({[timestampKey.toString()]: newRecord}, function() {
+  chrome.storage.local.set({[timestampKey.toString()]: newRecord}, function() {
     if (isRecordOpen && recordsTabId) {
       // tell records page update UI on-the-fly
       chrome.runtime.sendMessage({pendingRecordAction: "updateList"}, function(response) {

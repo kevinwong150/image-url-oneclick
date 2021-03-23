@@ -65,7 +65,7 @@ export default class Record extends Component {
 
   // remove record by timestamp(key)
   removeRecord(timestamp) {
-    chrome.storage.sync.remove(timestamp, () => {
+    chrome.storage.local.remove(timestamp, () => {
       let thisRecord = document.getElementById(timestamp);
       if (thisRecord) {
         const removedCount = this.state.record["count"];
@@ -74,7 +74,7 @@ export default class Record extends Component {
         this.setState({
           removed: true
         });
-        chrome.storage.sync.get(null, function (records) {
+        chrome.storage.local.get(null, function (records) {
           if(Object.keys(records).filter(key => !!(new Date(parseInt(key)).getTime())).length == 0){
             document.getElementById('records-body').innerHTML = "";
             render(<EmptyRecord />, document.getElementById('records-body'));
@@ -100,7 +100,7 @@ export default class Record extends Component {
   }
 
   onClickToggleStar = () => {
-    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, starred: !this.state.record.starred}}, function() {
+    chrome.storage.local.set({[this.props.timestamp]: {...this.state.record, starred: !this.state.record.starred}}, function() {
       this.setState({
         record: {...this.state.record, starred: !this.state.record.starred}
       });
@@ -108,7 +108,7 @@ export default class Record extends Component {
   }
 
   onClickToggleLabel = (color) => {
-    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, isLabelSelected: {...this.state.record["isLabelSelected"], [color]: !this.state.record["isLabelSelected"][color]}}}, function() {
+    chrome.storage.local.set({[this.props.timestamp]: {...this.state.record, isLabelSelected: {...this.state.record["isLabelSelected"], [color]: !this.state.record["isLabelSelected"][color]}}}, function() {
       this.setState({
         record: {...this.state.record, isLabelSelected: {...this.state.record["isLabelSelected"], [color]: !this.state.record["isLabelSelected"][color]}}
       });
@@ -120,7 +120,7 @@ export default class Record extends Component {
       renameState: params.renameState,
     });
 
-    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, name: params.recordName}}, function() {
+    chrome.storage.local.set({[this.props.timestamp]: {...this.state.record, name: params.recordName}}, function() {
       if (chrome.runtime.lastError) {
         this.setTempState("renameState", STATE_RENAME_FAIL, 1000);
       }
@@ -144,7 +144,7 @@ export default class Record extends Component {
       removeState: params.removeState
     });
 
-    chrome.storage.sync.set({[this.props.timestamp]: {...this.state.record, urls: recordUrls.join("|"), count: recordUrls.length}}, function() {
+    chrome.storage.local.set({[this.props.timestamp]: {...this.state.record, urls: recordUrls.join("|"), count: recordUrls.length}}, function() {
       if (chrome.runtime.lastError) {
         this.setTempState("removeState", STATE_REMOVE_FAIL, 1000);
       }
@@ -194,7 +194,7 @@ export default class Record extends Component {
       // select record page after restore record
       if(recordsTab) chrome.tabs.update(recordsTab.id, {selected: true});
 
-      chrome.storage.sync.get([
+      chrome.storage.local.get([
         "settings-removeRecordOnRestore?"
       ], function (records) {
         if("settings-removeRecordOnRestore?" in records && records["settings-removeRecordOnRestore?"]) {

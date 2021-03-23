@@ -8,7 +8,7 @@ let hasConfirm = true;
 let isDetailMode = true;
 
 // get saved settings 
-chrome.storage.sync.get([
+chrome.storage.local.get([
   "settings-removeAllConfirmation?",
   "settings-isDetailMode?"
 ], function (records) {
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function clear_all_records() {
-  chrome.storage.sync.get(null, function(records) {
+  chrome.storage.local.get(null, function(records) {
     // terminate if no storage
     if (Object.keys(records).filter((record) => /^settings-/.test(record)).length === 0)
       return;
@@ -90,7 +90,7 @@ export function clear_all_records() {
     if(hasConfirm) {
       if(confirm("This will remove all listed records, are you sure?")) {
         Object.keys(records).forEach((timestamp, index) => {
-          if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
+          if((new Date(parseInt(timestamp)).getTime())) chrome.storage.local.remove(timestamp);
         });
         document.getElementById('records-body').innerHTML = "";
         render(<EmptyRecord />, document.getElementById('records-body'));
@@ -99,7 +99,7 @@ export function clear_all_records() {
     }
     else {
       Object.keys(records).forEach((timestamp, index) => {
-        if((new Date(parseInt(timestamp)).getTime())) chrome.storage.sync.remove(timestamp);
+        if((new Date(parseInt(timestamp)).getTime())) chrome.storage.local.remove(timestamp);
       });
       document.getElementById('records-body').innerHTML = "";
       render(<EmptyRecord />, document.getElementById('records-body'));
@@ -109,7 +109,7 @@ export function clear_all_records() {
 }
 
 export function restore_records_page(filterParams = false) {
-  chrome.storage.sync.get(null, function(records) {
+  chrome.storage.local.get(null, function(records) {
     // terminate if no storage
     if (Object.keys(records).filter(record => !(/^settings-.+/.test(record))).length === 0) {
       return;
