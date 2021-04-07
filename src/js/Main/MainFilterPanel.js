@@ -49,9 +49,6 @@ export default class MainFilterPanel extends Component {
   }
 
   componentDidMount() {
-    console.log(document.getElementById("flatpickr-placeholder"));
-
-
     const datepicker = flatpickr(document.getElementById("flatpickr-placeholder"), {
       mode: "range",
       maxDate: "today",
@@ -114,8 +111,6 @@ export default class MainFilterPanel extends Component {
   }
 
   render(props, { filterParams }) {
-    console.log("filterParams.filterStarred", filterParams.filterStarred);
-
     return (
       <div class="bg-light-light break-all p-4 mb-4 rounded-md flex justify-between max-w-screen-md w-full z-10">
         <div class="filter-list">
